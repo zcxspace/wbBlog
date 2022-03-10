@@ -1,6 +1,8 @@
 package com.xhy.wblog.controller;
 
 
+import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.google.code.kaptcha.util.Config;
 import com.xhy.wblog.controller.result.Code;
 import com.xhy.wblog.controller.result.PublicResult;
 import com.xhy.wblog.controller.vo.UserVo;
@@ -9,7 +11,14 @@ import com.xhy.wblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 
 /**
  *  使用Restful的风格进行数据交互。
@@ -48,7 +57,7 @@ public class UserController {
     }
 
     @RequestMapping("get")
-    public PublicResult get(@RequestBody Integer id) {
+    public PublicResult get(Integer id) {
         try {
             User user = service.get(id);
             return new PublicResult(Code.QUERY_OK, user, "查询成功！");
@@ -94,6 +103,35 @@ public class UserController {
             e.printStackTrace();
             return new PublicResult(Code.DELETE_ERROR, "删除失败");
         }
+
+    }
+
+    // 验证码
+    @RequestMapping("/captcha")
+    public void captcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        // 创建Kaptcha对象
+        DefaultKaptcha dk = new DefaultKaptcha();
+        // 验证码配置
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("kaptcha.properties")) {
+
+            Properties properties = new Properties();
+            properties.load(is);
+            Config config = new Config(properties);
+            dk.setConfig(config);
+        }
+
+        // 验证码字符串
+        String code = dk.createText();
+
+        // 将其字符串保存到session中
+        HttpSession session = request.getSession();
+        session.setAttribute("code", code.toLowerCase());
+
+        // 将验证码字符串转换成验证码图片
+        BufferedImage img = dk.createImage(code);
+        response.setContentType("image/jpeg");
+        ImageIO.write(img, "jpg", response.getOutputStream());
 
     }
 
