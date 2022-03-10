@@ -5,6 +5,7 @@ import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 import com.xhy.wblog.controller.result.Code;
 import com.xhy.wblog.controller.result.PublicResult;
+import com.xhy.wblog.controller.vo.LoginVo;
 import com.xhy.wblog.controller.vo.UserVo;
 import com.xhy.wblog.domain.User;
 import com.xhy.wblog.service.UserService;
@@ -126,6 +127,7 @@ public class UserController {
         HttpSession session = request.getSession();
         session.setAttribute("code", code.toLowerCase());
 
+
         // 将验证码字符串转换成验证码图片
         BufferedImage img = dk.createImage(code);
         response.setContentType("image/jpeg");
@@ -134,26 +136,39 @@ public class UserController {
     }
 
     @RequestMapping("/login")
-    public PublicResult login(@RequestBody User bean, HttpServletRequest request) throws Exception {
-        Map<String, Object> map = service.login(bean);
+    public PublicResult login(@RequestBody LoginVo bean, HttpServletRequest request) throws Exception {
 
-        if ((boolean)map.get("success")) {
-            User user = (User) map.get("user");
-            // 保存用户id及其access_token到session中
-            HttpSession session = request.getSession();
-            String access_token = UUID.randomUUID().toString(); // 保证不一样就行
-            session.setAttribute("access_token", access_token);
-            session.setAttribute("user_id", user.getId());
+        try {
+            Map<String, Object> map = service.login(bean);
+            String code = (String) request.getSession().getAttribute("code");
 
-            // 将查询信息响应给前台
-            Map<String, Object> resultMap = new HashMap<>();
-            resultMap.put("access_token", access_token);
-            resultMap.put("user_id", user.getId());
-            return new PublicResult(true, Code.LOGIN_OK, map, (String) map.get("msg"));
+            if (!bean.getCaptcha().equals(code)) { // 验证码，错误
+                return new PublicResult(false, Code.LOGIN_ERROR, null, "验证码错误");
+            } else { // 验证码正确
+                if ((boolean) map.get("flag")) {
+                    User user = (User) map.get("user");
+                    // 保存用户id及其access_token到session中
+                    HttpSession session = request.getSession();
+                    String access_token = UUID.randomUUID().toString(); // 保证不一样就行
+                    session.setAttribute("access_token", access_token);
+                    session.setAttribute("user_id", user.getId());
 
-        } else {
-            return new PublicResult(false, Code.LOGIN_ERROR, null, (String) map.get("msg"));
+                    // 将查询信息响应给前台
+                    Map<String, Object> resultMap = new HashMap<>();
+                    resultMap.put("access_token", access_token);
+                    resultMap.put("user_id", user.getId());
+                    return new PublicResult(true, Code.LOGIN_OK, map, (String) map.get("msg"));
+
+                } else {
+                    return new PublicResult(false, Code.LOGIN_ERROR, null, (String) map.get("msg"));
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new PublicResult(false, Code.LOGIN_ERROR, null, "出错了！");
         }
+
     }
 
 

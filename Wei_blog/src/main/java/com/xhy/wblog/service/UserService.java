@@ -1,5 +1,6 @@
 package com.xhy.wblog.service;
 
+import com.xhy.wblog.controller.vo.LoginVo;
 import com.xhy.wblog.domain.User;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,6 @@ public interface UserService {
     List<User> list();
 
     // 用户登录
-    Map<String, Object> login(User bean) throws Exception;
+    Map<String, Object> login(LoginVo bean) throws Exception;
 
 }

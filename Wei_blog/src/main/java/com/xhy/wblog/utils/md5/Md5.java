@@ -18,7 +18,7 @@ public class Md5 {
      */
     public static String md5(String text, String key) throws Exception {
         // 加密后的字符串 加盐操作
-        String encodeStr = DigestUtils.md5Hex(text+key);
+        String encodeStr = DigestUtils.md5Hex(text + key);
         return encodeStr;
     }
 
@@ -39,6 +39,5 @@ public class Md5 {
         }
         return false;
     }
-
 
 }

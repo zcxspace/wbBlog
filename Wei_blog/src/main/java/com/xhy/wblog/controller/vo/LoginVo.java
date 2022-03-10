@@ -4,7 +4,7 @@ public class LoginVo {
 
     private String email;
     private String password;
-    private String captach;
+    private String captcha;
 
     public String getEmail() {
         return email;
@@ -22,11 +22,11 @@ public class LoginVo {
         this.password = password;
     }
 
-    public String getCaptach() {
-        return captach;
+    public String getCaptcha() {
+        return captcha;
     }
 
-    public void setCaptach(String captach) {
-        this.captach = captach;
+    public void setCaptcha(String captcha) {
+        this.captcha = captcha;
     }
 }
