@@ -18,7 +18,28 @@
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
                 <property name="defaultCharset" value="UTF-8"/>
             </bean>
+            <!-- 加载转换 -->
         </mvc:message-converters>
     </mvc:annotation-driven>
     <mvc:default-servlet-handler/>
+
+    <mvc:annotation-driven conversion-service="conversionService"/>
+    <!-- 日期转换器 -->
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="com.xhy.wblog.utils.converter.DateConverter">
+                    <property name="patterns">
+                        <list>
+                            <value>yyyy-MM-dd</value>
+                            <value>yyyy_MM_dd</value>
+                            <value>yyyy-MM-dd HH:mm:ss</value>
+                            <!-- 在此后面还可继续添加转换的格式 -->
+                        </list>
+                    </property>
+                </bean>
+            </set>
+        </property>
+    </bean>
+
 </beans>

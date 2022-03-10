@@ -11,7 +11,6 @@ public class Code {
     public static final Integer UPDATE_OK = 20021;
     public static final Integer DELETE_OK = 20031;
     public static final Integer QUERY_OK = 20041;
-
     // 失败
     public static final Integer SAVE_ERROR = 40010;
     public static final Integer UPDATE_ERROR = 40020;

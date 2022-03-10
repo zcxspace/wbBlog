@@ -6,7 +6,6 @@ import com.xhy.wblog.controller.result.PublicResult;
 import com.xhy.wblog.controller.vo.UserVo;
 import com.xhy.wblog.domain.User;
 import com.xhy.wblog.service.UserService;
-import com.xhy.wblog.system.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,37 +34,67 @@ public class UserController {
     private UserService service;
 
 
-    @GetMapping("list")
+    @RequestMapping("list")
     public PublicResult list() {
-        List<User> users = service.list();
-        if (true) throw new BusinessException("查询出错了", Code.QUERY_ERROR);
+        try {
+            List<User> users = service.list();
+            return new PublicResult(Code.QUERY_OK, users, "查询成功");
+        } catch (Exception e) {
+            // 来到这说明失败了
+            e.printStackTrace();
+            return new PublicResult(Code.QUERY_ERROR, "查询失败");
+        }
 
-        return new PublicResult(Code.QUERY_OK, users, "查询成功！");
     }
 
     @RequestMapping("get")
-    public PublicResult get(@PathVariable Integer id) {
-        User user = service.get(id);
-        if (user == null) throw new BusinessException("查询出错了", Code.QUERY_ERROR);
-        return new PublicResult(Code.QUERY_OK, user, "查询成功！");
+    public PublicResult get(@RequestBody Integer id) {
+        try {
+            User user = service.get(id);
+            return new PublicResult(Code.QUERY_OK, user, "查询成功！");
+        } catch (Exception e) {
+            // 来到这说明失败了
+            e.printStackTrace();
+            return new PublicResult(Code.QUERY_ERROR, "查询失败");
+        }
     }
 
     @RequestMapping("save")
-    public PublicResult save(@PathVariable User user) {
-        if (service.save(user)) throw new BusinessException("保存失败", Code.SAVE_ERROR);
-        return new PublicResult(Code.SAVE_OK, "保存成功");
+    public PublicResult save(@RequestBody User user) {
+        try {
+            service.save(user);
+            return new PublicResult(Code.SAVE_OK, "保存成功");
+        } catch (Exception e) { //  来到这说明失败了
+            e.printStackTrace();
+            return new PublicResult(Code.SAVE_ERROR, "保存失败");
+        }
     }
 
     @RequestMapping("/update")
     public PublicResult update(@RequestBody User user) {
-        if (service.save(user)) throw new BusinessException("更新失败", Code.UPDATE_ERROR);
-        return new PublicResult(Code.UPDATE_OK, "更新成功");
+        try {
+            service.update(user);
+            return new PublicResult(Code.UPDATE_OK, "更新成功");
+        } catch (Exception e) {
+            // 来到这说明失败了
+            e.printStackTrace();
+            return new PublicResult(Code.UPDATE_ERROR, "更新失败");
+        }
+
     }
 
-    @PostMapping("delete/{id}")
-    public PublicResult delete(@PathVariable Integer id) {
-        if (service.remove(id)) throw new BusinessException("删除失败", Code.DELETE_ERROR);
-        return new PublicResult(Code.DELETE_OK, "删除成功成功");
+    @RequestMapping("delete")
+    public PublicResult delete(Integer id) {
+
+        try {
+            service.remove(id);
+            return new PublicResult(Code.DELETE_OK, "删除成功");
+        } catch (Exception e) {
+            // 失败了
+            e.printStackTrace();
+            return new PublicResult(Code.DELETE_ERROR, "删除失败");
+        }
+
     }
 
 

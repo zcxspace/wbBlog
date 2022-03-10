@@ -145,4 +145,15 @@ public class User {
     public void setGender(Integer gender) {
         this.gender = gender;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", createdTime=" + createdTime +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", birthday=" + birthday +
+                '}';
+    }
 }
