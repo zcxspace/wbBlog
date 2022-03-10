@@ -5,22 +5,13 @@ import com.xhy.wblog.controller.result.Code;
 import com.xhy.wblog.controller.result.PublicResult;
 import com.xhy.wblog.controller.vo.RegisterVo;
 import com.xhy.wblog.controller.vo.LoginVo;
-import com.xhy.wblog.controller.result.Code;
-import com.xhy.wblog.controller.result.PublicResult;
-import com.xhy.wblog.controller.vo.RegisterVo;
 import com.xhy.wblog.dao.UserDao;
 import com.xhy.wblog.domain.User;
 import com.xhy.wblog.service.UserService;
 import com.xhy.wblog.utils.md5.Md5;
-import net.sf.jsqlparser.statement.update.UpdateSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -29,35 +20,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao dao;
 
-    // 下面是CRUD的基本实现
-
-    @Override
-    public boolean save(User user) {
-        return dao.insert(user) > 0;
-    }
-
-    @Override
-    public boolean update(User user) {
-        return dao.updateById(user) > 0;
-    }
-
-    @Override
-    public boolean remove(Integer id) {
-        return dao.deleteById(id) > 0;
-    }
-
-    @Override
-    public User get(Integer id) {
-        return dao.selectById(id);
-    }
-
-    @Override
-    public List<User> list() {
-
-         // 这个可以做条件查询，具体mybatis-plus的使用，自行百度。无条件就是查询全部
-         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        return dao.selectList(queryWrapper);
-    }
 
     // 登录
     @Override
@@ -90,7 +52,6 @@ public class UserServiceImpl implements UserService {
 
     //注册用--用email查找user
     @Override
-    @Transactional(readOnly = false)
     public PublicResult register(RegisterVo registerVo) {
         QueryWrapper<User> wrapper = new QueryWrapper<User>().eq("email",registerVo.getEmail());
         User user = dao.selectOne(wrapper);

@@ -1,5 +1,6 @@
 package com.xhy.wblog.controller.vo;
 
+// 接收前端登录数据实体类
 public class LoginVo {
 
     private String email;

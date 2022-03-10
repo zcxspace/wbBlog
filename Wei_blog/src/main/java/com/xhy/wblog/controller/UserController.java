@@ -7,20 +7,17 @@ import com.xhy.wblog.controller.result.Code;
 import com.xhy.wblog.controller.result.PublicResult;
 import com.xhy.wblog.controller.vo.RegisterVo;
 import com.xhy.wblog.controller.vo.LoginVo;
-import com.xhy.wblog.controller.vo.RegisterVo;
-import com.xhy.wblog.controller.vo.UserVo;
 import com.xhy.wblog.domain.User;
 import com.xhy.wblog.service.UserService;
+import com.xhy.wblog.utils.exception.ExceptUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 
 import java.util.*;
 
@@ -36,8 +33,6 @@ public class UserController {
 
     /*
     我们统一一下
-    这个Restful风格
-    我们就只使用传统的 Get请求 和Post请求
     读取： Get请求
     写入： Post请求
      */
@@ -46,69 +41,6 @@ public class UserController {
     @Autowired
     private UserService service;
 
-
-    @RequestMapping("list")
-    public PublicResult list() {
-        try {
-            List<User> users = service.list();
-            return new PublicResult(true, Code.QUERY_OK, users, "查询成功");
-        } catch (Exception e) {
-            // 来到这说明失败了
-            e.printStackTrace();
-            return new PublicResult(false, Code.QUERY_ERROR, null, "查询失败");
-        }
-
-    }
-
-    @RequestMapping("get")
-    public PublicResult get(Integer id) {
-        try {
-            User user = service.get(id);
-            return new PublicResult(true, Code.QUERY_OK, user, "查询成功！");
-        } catch (Exception e) {
-            // 来到这说明失败了
-            e.printStackTrace();
-            return new PublicResult(true, Code.QUERY_ERROR,null, "查询失败");
-        }
-    }
-
-    @RequestMapping("save")
-    public PublicResult save(@RequestBody User user) {
-        try {
-            service.save(user);
-            return new PublicResult(true, Code.SAVE_OK, null, "保存成功");
-        } catch (Exception e) { //  来到这说明失败了
-            e.printStackTrace();
-            return new PublicResult(false, Code.SAVE_ERROR, null,"保存失败");
-        }
-    }
-
-    @RequestMapping("/update")
-    public PublicResult update(@RequestBody User user) {
-        try {
-            service.update(user);
-            return new PublicResult(true, Code.UPDATE_OK, null, "更新成功");
-        } catch (Exception e) {
-            // 来到这说明失败了
-            e.printStackTrace();
-            return new PublicResult(false, Code.UPDATE_ERROR, null, "更新失败");
-        }
-
-    }
-
-    @RequestMapping("delete")
-    public PublicResult delete(Integer id) {
-
-        try {
-            service.remove(id);
-            return new PublicResult(true, Code.DELETE_OK, null, "删除成功");
-        } catch (Exception e) {
-            // 失败了
-            e.printStackTrace();
-            return new PublicResult(false, Code.DELETE_ERROR, null, "删除失败");
-        }
-
-    }
 
     // 验证码
     @RequestMapping("/captcha")
@@ -130,7 +62,6 @@ public class UserController {
         // 将其字符串保存到session中
         HttpSession session = request.getSession();
         session.setAttribute("code", code.toLowerCase());
-
 
         // 将验证码字符串转换成验证码图片
         BufferedImage img = dk.createImage(code);
@@ -170,19 +101,23 @@ public class UserController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new PublicResult(false, Code.LOGIN_ERROR, null, "出错了！");
+            return new PublicResult(false, Code.LOGIN_ERROR, ExceptUtil.getSimpleException(e), "出错了！");
         }
 
     }
 
     @RequestMapping("register")
     public PublicResult register(@RequestBody RegisterVo registerVo,HttpServletRequest request){
-        String code = (String) request.getSession().getAttribute("code");
 
-        if(registerVo.getCaptcha().equals(code)){
-            return service.register(registerVo);
-        }else {
-            return new PublicResult(false,Code.CAPTCHA_ERROR,null,"验证码错误!");
+        try {
+            String code = (String) request.getSession().getAttribute("code");
+            if(registerVo.getCaptcha().equals(code)){
+                return service.register(registerVo);
+            }else {
+                return new PublicResult(false,Code.CAPTCHA_ERROR,null,"验证码错误!");
+            }
+        } catch (Exception e) {
+            return new PublicResult(false, Code.CAPTCHA_ERROR, ExceptUtil.getSimpleException(e),"注册失败");
         }
 
     }
