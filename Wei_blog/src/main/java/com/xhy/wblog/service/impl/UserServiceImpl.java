@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xhy.wblog.controller.result.Code;
 import com.xhy.wblog.controller.result.PublicResult;
 import com.xhy.wblog.controller.vo.RegisterVo;
+import com.xhy.wblog.controller.vo.LoginVo;
 import com.xhy.wblog.dao.UserDao;
 import com.xhy.wblog.domain.User;
 import com.xhy.wblog.service.UserService;
@@ -57,7 +58,7 @@ public class UserServiceImpl implements UserService {
 
     // 登录
     @Override
-    public Map<String, Object> login(User bean) throws Exception {
+    public Map<String, Object> login(LoginVo bean) throws Exception {
         // 条件查询
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("email", bean.getEmail());
