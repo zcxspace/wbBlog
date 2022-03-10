@@ -1,6 +1,8 @@
 package com.xhy.wblog.service;
 
 import com.xhy.wblog.controller.vo.LoginVo;
+import com.xhy.wblog.controller.result.PublicResult;
+import com.xhy.wblog.controller.vo.RegisterVo;
 import com.xhy.wblog.domain.User;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,4 +37,9 @@ public interface UserService {
 
     //用email来查找
     User selectByEmail(String email);
+    public PublicResult register(RegisterVo registerVo);
+
+    // 用户登录
+    Map<String, Object> login(User bean) throws Exception;
+
 }
