@@ -4,6 +4,7 @@ import com.xhy.wblog.domain.User;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 // 事务管理: 默认 只读
 @Transactional(readOnly = true)
@@ -23,7 +24,12 @@ public interface UserService {
     boolean remove(Integer id);
 
 
+
     // 一般最多的操作是查询，所以有关查询的，最好开启只读
     User get(Integer id);
     List<User> list();
+
+    // 用户登录
+    Map<String, Object> login(User bean) throws Exception;
+
 }
