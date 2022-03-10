@@ -4,6 +4,7 @@ import com.xhy.wblog.domain.User;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 // 事务管理: 默认 只读
 @Transactional(readOnly = true)
@@ -28,4 +29,8 @@ public interface UserService {
     List<User> list();
     //用email来查找
     User selectByEmail(String email);
+
+    // 用户登录
+    Map<String, Object> login(User bean) throws Exception;
+
 }

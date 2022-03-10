@@ -5,6 +5,8 @@ package com.xhy.wblog.controller.result;
 
 public class PublicResult {
 
+    // 状态
+    private Boolean success;
     // 操作结果编码
     private Integer code;
     // 操作数据结果
@@ -13,29 +15,11 @@ public class PublicResult {
     private String message;
 
 
-
     public PublicResult() {
     }
 
-    // 返回状态码
-    public PublicResult(Integer code) {
-        this.code = code;
-    }
-
-    // 返回状态码 和 数据
-    public PublicResult(Integer code, Object date) {
-        this.code = code;
-        this.date = date;
-    }
-
-    // 返回状态码和消息
-    public PublicResult(Integer code, String message) {
-        this.code = code;
-        this.message = message;
-    }
-
-    // 返回状态码 和 消息 ，和数据
-    public PublicResult(Integer code, Object date, String message) {
+    public PublicResult(Boolean success, Integer code, Object date, String message) {
+        this.success = success;
         this.code = code;
         this.date = date;
         this.message = message;
@@ -64,4 +48,13 @@ public class PublicResult {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(Boolean success) {
+        this.success = success;
+    }
+
 }
