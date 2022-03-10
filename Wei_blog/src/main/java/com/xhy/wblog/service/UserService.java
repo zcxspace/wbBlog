@@ -36,10 +36,7 @@ public interface UserService {
     Map<String, Object> login(LoginVo bean) throws Exception;
 
     //用email来查找
-    User selectByEmail(String email);
     public PublicResult register(RegisterVo registerVo);
 
-    // 用户登录
-    Map<String, Object> login(User bean) throws Exception;
 
 }
