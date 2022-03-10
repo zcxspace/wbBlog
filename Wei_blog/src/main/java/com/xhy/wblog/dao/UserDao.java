@@ -1,7 +1,7 @@
 package com.xhy.wblog.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.xhy.wblog.domain.User;
+import com.xhy.wblog.entity.User;
 
 // BaseMapper<User> 继承Mybatis-plus 的类 ，泛型：表的实体对象
 public interface UserDao extends BaseMapper<User> {

@@ -1,52 +1,26 @@
 package com.xhy.wblog.controller.vo;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 //接受注册前端数据的实体类
+@Data   // 生成get和set
+@AllArgsConstructor    // 生成全参构造
+@NoArgsConstructor     // 生成空构造方法
+@ToString              // 生成toString方法
 public class RegisterVo {
 
+    // 邮件
     private String email;
+    // 密码
     private String password;
+    // 验证码
     private String captcha;
+    // 验证码
     private Integer gender;
 
-    public String getEmail() {
-        return email;
-    }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getCaptcha() {
-        return captcha;
-    }
-
-    public void setCaptcha(String captcha) {
-        this.captcha = captcha;
-    }
-
-    public Integer getGender() {
-        return gender;
-    }
-
-    public void setGender(Integer gender) {
-        this.gender = gender;
-    }
-
-    @Override
-    public String toString() {
-        return "RegisterVo{" +
-                "email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", captcha='" + captcha + '\'' +
-                '}';
-    }
 }

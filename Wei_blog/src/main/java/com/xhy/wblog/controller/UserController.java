@@ -7,7 +7,7 @@ import com.xhy.wblog.controller.result.Code;
 import com.xhy.wblog.controller.result.PublicResult;
 import com.xhy.wblog.controller.vo.RegisterVo;
 import com.xhy.wblog.controller.vo.LoginVo;
-import com.xhy.wblog.domain.User;
+import com.xhy.wblog.entity.User;
 import com.xhy.wblog.service.UserService;
 import com.xhy.wblog.utils.exception.ExceptUtil;
 import org.springframework.beans.factory.annotation.Autowired;

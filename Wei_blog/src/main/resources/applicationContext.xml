@@ -38,7 +38,7 @@
     <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <!-- 领域模型所在包 -->
-        <property name="typeAliasesPackage" value="com.xhy.wblog.domain"/>
+        <property name="typeAliasesPackage" value="com.xhy.wblog.entity"/>
         <!--  使用 Mybatis-plus 集成的分页插件，若有分页展示需求，百度用法即可  -->
         <property name="plugins">
             <array>
@@ -48,7 +48,7 @@
         <!-- mapper映射文件存储地址 -->
         <property name="mapperLocations" >
             <array>
-                <value>classpath*:mappers/*.xml</value>
+                <value>classpath*:mapper/*.xml</value>
             </array>
             <!-- 还可配置其他的东西。 -->
         </property>
