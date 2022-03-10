@@ -33,13 +33,12 @@ public interface UserService {
     User get(Integer id);
     List<User> list();
     //用email来查找
+    @Transactional(readOnly = false)
     public PublicResult register(RegisterVo registerVo);
 
     // 用户登录
     Map<String, Object> login(LoginVo bean) throws Exception;
 
-    //用email来查找
-    public PublicResult register(RegisterVo registerVo);
 
 
 }
