@@ -7,6 +7,7 @@ public class RegisterVo {
     private String email;
     private String password;
     private String captcha;
+    private Integer gender;
 
     public String getEmail() {
         return email;
@@ -30,6 +31,14 @@ public class RegisterVo {
 
     public void setCaptcha(String captcha) {
         this.captcha = captcha;
+    }
+
+    public Integer getGender() {
+        return gender;
+    }
+
+    public void setGender(Integer gender) {
+        this.gender = gender;
     }
 
     @Override

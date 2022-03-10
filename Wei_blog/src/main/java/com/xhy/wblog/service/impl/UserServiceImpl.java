@@ -1,6 +1,9 @@
 package com.xhy.wblog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.xhy.wblog.controller.result.Code;
+import com.xhy.wblog.controller.result.PublicResult;
+import com.xhy.wblog.controller.vo.RegisterVo;
 import com.xhy.wblog.dao.UserDao;
 import com.xhy.wblog.domain.User;
 import com.xhy.wblog.service.UserService;
@@ -8,7 +11,10 @@ import com.xhy.wblog.utils.md5.Md5;
 import net.sf.jsqlparser.statement.update.UpdateSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,8 +86,26 @@ public class UserServiceImpl implements UserService {
 
     //注册用--用email查找user
     @Override
-    public User selectByEmail(String email) {
-        QueryWrapper<User> wrapper = new QueryWrapper<User>().eq("email",email);
-        return dao.selectOne(wrapper);
+    @Transactional(readOnly = false)
+    public PublicResult register(RegisterVo registerVo) {
+        QueryWrapper<User> wrapper = new QueryWrapper<User>().eq("email",registerVo.getEmail());
+        User user = dao.selectOne(wrapper);
+        try {
+            if(user!=null){//如果不为空，证明已经被注册
+                return new PublicResult(false, Code.REGISTER_ERROR,null,"该邮件已经被注册!");
+            }else{//不然就创建user类，插入数据库
+                user = new User();
+                user.setEmail(registerVo.getEmail());
+                String key = Md5.md5(registerVo.getPassword(), Md5.md5key);
+                user.setPassword(key);
+                user.setGender(registerVo.getGender());
+                dao.insert(user);
+                return new PublicResult(true,Code.REGISTER_OK,null,"注册成功!");
+            }
+        } catch (Exception e) {
+            // 来到这说明失败了
+            e.printStackTrace();
+            return new PublicResult(false,Code.REGISTER_ERROR, null,"出现了未知错误!");
+        }
     }
 }

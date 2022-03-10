@@ -5,6 +5,7 @@ import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 import com.xhy.wblog.controller.result.Code;
 import com.xhy.wblog.controller.result.PublicResult;
+import com.xhy.wblog.controller.vo.RegisterVo;
 import com.xhy.wblog.controller.vo.UserVo;
 import com.xhy.wblog.domain.User;
 import com.xhy.wblog.service.UserService;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -154,6 +156,18 @@ public class UserController {
         } else {
             return new PublicResult(false, Code.LOGIN_ERROR, null, (String) map.get("msg"));
         }
+    }
+
+    @RequestMapping("register")
+    public PublicResult register(@RequestBody RegisterVo registerVo,HttpServletRequest request){
+        String code = (String) request.getSession().getAttribute("code");
+
+        if(registerVo.getCaptcha().equals(code)){
+            return service.register(registerVo);
+        }else {
+            return new PublicResult(false,Code.CAPTCHA_ERROR,null,"验证码错误!");
+        }
+
     }
 
 
