@@ -7,6 +7,7 @@ import com.xhy.wblog.controller.result.Code;
 import com.xhy.wblog.controller.result.PublicResult;
 import com.xhy.wblog.controller.vo.RegisterVo;
 import com.xhy.wblog.controller.vo.LoginVo;
+import com.xhy.wblog.controller.vo.RegisterVo;
 import com.xhy.wblog.controller.vo.UserVo;
 import com.xhy.wblog.domain.User;
 import com.xhy.wblog.service.UserService;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+
 import java.util.*;
 
 /**

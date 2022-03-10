@@ -1,5 +1,7 @@
 package com.xhy.wblog.service;
 
+import com.xhy.wblog.controller.result.PublicResult;
+import com.xhy.wblog.controller.vo.RegisterVo;
 import com.xhy.wblog.controller.vo.LoginVo;
 import com.xhy.wblog.controller.result.PublicResult;
 import com.xhy.wblog.controller.vo.RegisterVo;
@@ -27,10 +29,11 @@ public interface UserService {
     boolean remove(Integer id);
 
 
-
     // 一般最多的操作是查询，所以有关查询的，最好开启只读
     User get(Integer id);
     List<User> list();
+    //用email来查找
+    public PublicResult register(RegisterVo registerVo);
 
     // 用户登录
     Map<String, Object> login(LoginVo bean) throws Exception;
