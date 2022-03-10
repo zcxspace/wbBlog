@@ -78,4 +78,11 @@ public class UserServiceImpl implements UserService {
         return map;
 
     }
+
+    //注册用--用email查找user
+    @Override
+    public User selectByEmail(String email) {
+        QueryWrapper<User> wrapper = new QueryWrapper<User>().eq("email",email);
+        return dao.selectOne(wrapper);
+    }
 }
