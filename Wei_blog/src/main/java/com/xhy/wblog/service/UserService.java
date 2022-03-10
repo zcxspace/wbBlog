@@ -26,4 +26,6 @@ public interface UserService {
     // 一般最多的操作是查询，所以有关查询的，最好开启只读
     User get(Integer id);
     List<User> list();
+    //用email来查找
+    User selectByEmail(String email);
 }
