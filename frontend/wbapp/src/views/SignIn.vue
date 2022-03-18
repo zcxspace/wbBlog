@@ -121,7 +121,7 @@ export default {
   width: 55%;
   height: 70%;
   border-radius: 24px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
   box-shadow: 9px 9px 15px #5e87ce, -9px -9px 15px #8ac7ff;
 }
 .title {
