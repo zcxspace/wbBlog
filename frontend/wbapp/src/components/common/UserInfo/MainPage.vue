@@ -32,7 +32,18 @@
         </div>
       </div>
 
-      <div class="tab">微博</div>
+      <div class="tab">
+        <ul>
+          <li
+            v-for="tab of tabs"
+            :key="tab.com"
+            @click="currentTab = tab.com"
+            :class="[currentTab == tab.com ? 'active' : '']"
+          >
+            {{ tab.title }}
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -42,6 +53,13 @@ export default {
   data() {
     return {
       follow: false,
+      currentTab: "blog",
+      tabs: [
+        { title: "精选", com: "select" },
+        { title: "微博", com: "blog" },
+        { title: "视频", com: "video" },
+        { title: "相册", com: "album" },
+      ],
     };
   },
   methods: {
@@ -58,6 +76,30 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
+.tab ul {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: white;
+  padding: 3px;
+}
+.tab ul li {
+  height: 100%;
+  flex: 1;
+  border-radius: 8px;
+  transition: all ease-in 0.3s;
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  justify-content: center;
+}
+.active {
+  background: rgb(187, 186, 186);
+  color: rgb(133, 93, 20);
+}
+
 .myPage {
   width: 100%;
   min-height: 500px;
