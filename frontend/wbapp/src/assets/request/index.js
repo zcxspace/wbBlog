@@ -35,5 +35,16 @@ async function SignIn(email, password, captcha) {
 }
 
 
-export { getCaptcha, SignUp, SignIn }
+// 获取动态热榜
+async function GetHotWord(num) {
+    await axios.post('http://120.25.125.57:8080/xhywblog/dynamic/getHotDynamic', {
+        num = num,
+    }).then((res) => {
+        console.log(res)
+    }).catch((e) => {
+        console.log(e)
+    })
+}
+
+export { getCaptcha, SignUp, SignIn, GetHotWord }
 
