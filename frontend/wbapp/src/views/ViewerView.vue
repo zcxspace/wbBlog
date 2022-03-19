@@ -1,11 +1,11 @@
 <template>
   <div class="Viewer">
-    <main-lay-out :isShowTop="isShowTop"> </main-lay-out>
+    <main-layout :isShowTop="isShowTop"> </main-layout>
   </div>
 </template>
 
 <script>
-import MainLayouts from "../layouts/MainLayout.vue";
+import MainLayout from "../layouts/MainLayout.vue";
 export default {
   data() {
     return {
@@ -13,8 +13,7 @@ export default {
     };
   },
   components: {
-    MainLayouts,
-    MainLayOut,
+    MainLayout,
   },
 };
 </script>
