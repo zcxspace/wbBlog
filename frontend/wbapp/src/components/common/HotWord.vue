@@ -22,13 +22,14 @@
       </li>
     </ul>
     <div class="bottom">
-      <slot name="jumpBtn">跳转到热搜板块</slot>
+      <slot name="jumpBtn">跳转到热搜区</slot>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  name: "HotWord",
   data() {
     return {
       lists: [

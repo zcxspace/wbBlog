@@ -7,9 +7,7 @@ const routes = [
     component: () => import('../views/ViewerView.vue')
   },
 
-  {
 
-  }
   // {
   //   path: '/about',
   //   name: 'about',

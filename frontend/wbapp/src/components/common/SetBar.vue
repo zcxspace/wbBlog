@@ -27,8 +27,8 @@
       <slot :textarea="textarea"></slot>
       <div class="img" v-if="urls.length != 0">
         <ul>
-          <template v-for="(url, index) of urls" :key="index">
-            <li class="imgBox">
+          <template v-for="(url, index) of urls">
+            <li class="imgBox" :key="index">
               <img :src="url" alt="自定义" />
               <button @click="delImg(index)">
                 <i class="iconfont icon-chahao"></i>
