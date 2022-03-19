@@ -1,8 +1,11 @@
 <template>
   <div class="myPage">
-    <div class="top">
-      <button>返回</button>
-    </div>
+    <el-affix :offset="80">
+      <div class="top">
+        <div class="goBackTab"><button>返回</button></div>
+      </div>
+    </el-affix>
+
     <div class="infoBar">
       <div class="userFile"></div>
 
@@ -31,7 +34,17 @@
           >
         </div>
       </div>
-
+      <div class="infoBox">
+        <div v-if="isShrink" @click="isShrink = !isShrink">个人信息</div>
+        <div
+          v-for="(info, index) of infos"
+          :key="index"
+          @click="isShrink = !isShrink"
+          v-else
+        >
+          {{ info.title }}
+        </div>
+      </div>
       <div class="tab">
         <ul>
           <li
@@ -53,13 +66,16 @@ export default {
   data() {
     return {
       follow: false,
+      isShrink: true,
       currentTab: "blog",
+      infoStyle: "info-style",
       tabs: [
         { title: "精选", com: "select" },
         { title: "微博", com: "blog" },
         { title: "视频", com: "video" },
         { title: "相册", com: "album" },
       ],
+      infos: [{ title: "title" }, { title: "title" }, { title: "title" }],
     };
   },
   methods: {
@@ -76,6 +92,21 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
+.info-style {
+  background: red;
+}
+.infoBox {
+  flex: 1;
+  padding-top: 30px;
+  height: 100%;
+}
+.infoBox div {
+  height: 50px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
+}
 .tab ul {
   width: 100%;
   height: 50px;
@@ -83,7 +114,7 @@ export default {
   align-items: center;
   justify-content: space-around;
   background: white;
-  padding: 3px;
+  padding: 2px;
 }
 .tab ul li {
   height: 100%;
@@ -96,8 +127,8 @@ export default {
   justify-content: center;
 }
 .active {
-  background: rgb(187, 186, 186);
-  color: rgb(133, 93, 20);
+  background: rgb(221, 220, 206);
+  color: rgb(255, 166, 0);
 }
 
 .myPage {
@@ -109,11 +140,22 @@ export default {
   justify-content: space-between;
 }
 .top {
-  padding: 15px;
+  width: 100%;
+  height: 50px;
 }
-.top button {
-  font-size: 20px;
-  color: whitesmoke;
+.top .goBackTab {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  padding-left: 15px;
+  justify-content: flex-start;
+  background: white;
+}
+.goBackTab button {
+  font-size: 25px;
+  color: black;
+  background: transparent;
+  border: 0;
 }
 .infoBar {
   position: relative;
@@ -122,7 +164,7 @@ export default {
   justify-content: space-between;
   height: 230px;
   width: 100%;
-  background: rgb(41, 40, 40);
+  background: white;
 }
 .userFile {
   width: 150px;
@@ -138,7 +180,7 @@ export default {
   justify-content: space-between;
   padding-left: 190px;
   width: 100%;
-  height: 80px;
+  min-height: 80px;
   padding-right: 50px;
   align-items: center;
   background: chocolate;
