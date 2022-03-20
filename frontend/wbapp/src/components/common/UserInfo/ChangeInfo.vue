@@ -4,56 +4,73 @@
       <div class="photoFile">
         <div class="mask">
           点击更换头像
-          <input type="file" @change="getUrl" accept="image/*" />
+          <input
+            type="file"
+            @change="getUrl"
+            accept="image/*"
+            enctype="multipart/form-data"
+          />
         </div>
 
-        <img :src="fileUrl" alt="头像" />
+        <img :src="userInfo.profileUrl" alt="头像" />
       </div>
       <div>
-        <h2>邮箱地址</h2>
+        <h2>{{ userInfo.email }}</h2>
       </div>
     </div>
 
     <div class="setInfo">
       <div class="infos" v-if="isShow">
-        <div class="info" v-for="(info, index) of infos" :key="index">
-          <div>{{ info.title }}</div>
+        <div class="info">
+          <div>姓名:{{ userInfo.name }}{{ $store.state.userInfo.name }}</div>
+        </div>
+        <div class="info">
+          <div>地址:{{ userInfo.address }}</div>
+        </div>
+        <div class="info">
+          <div>电话:{{ userInfo.phone }}</div>
+        </div>
+        <div class="info">
+          <div>职业:{{ userInfo.job }}</div>
+        </div>
+        <div class="info">
+          <div>兴趣:{{ userInfo.interests }}</div>
+        </div>
+        <div class="info">
+          <div>特质:{{ userInfo.trait }}</div>
+        </div>
+        <div class="info">
+          <div>性别:{{ getGender }}</div>
+        </div>
+        <div class="info">
+          <div>生日:{{ getBirth }}</div>
         </div>
       </div>
 
       <div class="inputs" v-else>
         <div class="inputBox">
           <p>姓名</p>
-          <input type="text" v-model="input" />
+          <input type="text" :value="userInfo.name" ref="name" />
         </div>
 
         <div class="inputBox">
           <p>地址</p>
-          <input type="text" v-model="input" />
+          <input type="text" :value="userInfo.address" ref="address" />
         </div>
 
         <div class="inputBox">
           <p>电话</p>
-          <input type="text" v-model="input" />
-        </div>
-
-        <div class="inputBox">
-          <p>生日</p>
-          <el-date-picker
-            v-model="value1"
-            type="date"
-            placeholder="Pick a day"
-          />
+          <input type="text" :value="userInfo.phone" ref="phone" />
         </div>
 
         <div class="inputBox">
           <p>职业</p>
-          <input type="text" v-model="input" />
+          <input type="text" :value="userInfo.job" ref="job" />
         </div>
 
         <div class="inputBox">
           <p>兴趣</p>
-          <input type="text" v-model="input" />
+          <input type="text" :value="userInfo.interests" ref="interest" />
         </div>
         <div class="inputBox">
           <p>性别</p>
@@ -63,10 +80,12 @@
           <input
             type="radio"
             name="gender"
-            value="man"
             class="gender"
-            v-model="this.userInfo.picked"
+            value="1"
+            v-model="picked"
+            :checked="this.userInfo.gender == 1"
             id="man"
+            ref="man"
           />
           <label for="woman">
             <i class="iconfont icon-nv"></i>
@@ -74,22 +93,41 @@
           <input
             type="radio"
             name="gender"
-            value="woman"
             class="gender"
-            v-model="this.userInfo.picked"
+            v-model="picked"
+            :checked="this.userInfo.gender == 0"
+            value="0"
             id="woman"
+            ref="woman"
           />
 
-          {{ this.userInfo.picked }}
+          {{ this.userInfo.gender }}
         </div>
         <div class="inputBox">
           <p>特质</p>
-          <input type="text" v-model="input" />
+          <input type="text" :value="userInfo.trait" ref="trait" />
+        </div>
+        <div class="inputBox">
+          <p>生日</p>
+          <el-date-picker
+            :value="userInfo.birthday"
+            type="date"
+            placeholder="Pick a day"
+            ref="birthday"
+          />
         </div>
       </div>
 
       <div class="btn">
-        <button @click="isShow = true" v-show="!isShow">取消</button>
+        <button
+          @click="
+            showPanel();
+            cancel();
+          "
+          v-show="!isShow"
+        >
+          取消
+        </button>
         <button @click="changeInfo">修改信息</button>
       </div>
     </div>
@@ -97,41 +135,74 @@
 </template>
 
 <script>
+import {
+  changeProfile,
+  changeUserInfo,
+} from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
+
 export default {
   data() {
     return {
-      infos: [
-        { title: "姓名:" },
-        { title: "地址:" },
-        { title: "电话:" },
-        { title: "生日:" },
-        { title: "职业:" },
-        { title: "兴趣:" },
-        { title: "特质:" },
-        { title: "性别:" },
-      ],
-      userInfo: {
-        picked: "",
-      },
+      userInfo: null,
       isShow: true,
       input: "",
       value1: "",
       fileUrl: "",
+      picked: "",
     };
   },
   methods: {
-    changeInfo() {
+    async changeInfo() {
       this.isShow = !this.isShow;
+      let res = await changeUserInfo(
+        this.$refs.name.value,
+        this.$refs.address.value,
+        this.$refs.intro.value,
+        this.$refs.phone.value,
+        this.$refs.job.value,
+        this.$refs.trait.value,
+        this.$refs.interest.value,
+        this.$refs.gender.value
+      );
+      console.log(res);
     },
+    showPanel() {
+      this.isShow = true;
+    },
+
     getUrl(e) {
       let file = e.target.files[0];
       let reader = new FileReader();
       reader.readAsDataURL(file);
       let that = this;
-      reader.onload = function () {
-        that.fileUrl = reader.result;
+      reader.onload = async function () {
+        let result = await changeProfile(reader.result);
+        if (result == "图片上传成功") {
+          that.userInfo.profileUrl = reader.result;
+        } else {
+          console.log("图片上传失败");
+        }
       };
     },
+  },
+  computed: {
+    getGender() {
+      return this.userInfo.gender == 1 ? "男" : "女";
+    },
+    getBirth() {
+      let time = new Date(this.userInfo.birthday);
+      let year = time.getFullYear();
+      let month = time.getMonth();
+      let day = time.getDate();
+      return `${year}年${month + 1}月${day}日`;
+    },
+    //修改性别时 获取性别 若未选中则返回原数据
+    getChangeGender() {
+      return this.picked == "" ? this.userInfo.gender : this.picked;
+    },
+  },
+  created() {
+    this.userInfo = this.$store.state.userInfo;
   },
 };
 </script>
@@ -254,7 +325,7 @@ export default {
   background: whitesmoke;
 }
 .gender {
-  opacity: 0;
+  opacity: 1;
 }
 .photoFile {
   position: relative;

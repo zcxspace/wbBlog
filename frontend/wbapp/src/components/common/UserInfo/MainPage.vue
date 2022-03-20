@@ -7,20 +7,24 @@
     </el-affix>
 
     <div class="infoBar">
-      <div class="userFile"></div>
+      <div class="userFile">
+        <img :src="userInfo.profileUrl" alt="用户头像" />
+      </div>
 
       <div class="userInfo">
         <div class="name">
-          <div class="userName"><h2>微博用户001</h2></div>
+          <div class="userName">
+            <h2>{{ userInfo.name }}</h2>
+          </div>
           <div class="followInfo">
             <div>
               <span>粉丝</span>
-              <h4>100万</h4>
+              <h4>{{ userInfo.followMe }}</h4>
             </div>
 
             <div>
               <span>关注</span>
-              <h4>100万</h4>
+              <h4>{{ userInfo.following }}</h4>
             </div>
           </div>
         </div>
@@ -34,7 +38,9 @@
           >
         </div>
       </div>
+
       <div class="infoBox">
+        <!-- 显示或隐藏用户信息 -->
         <div v-if="isShrink" @click="isShrink = !isShrink">个人信息</div>
         <div
           v-for="(info, index) of infos"
@@ -76,12 +82,18 @@ export default {
         { title: "相册", com: "album" },
       ],
       infos: [{ title: "title" }, { title: "title" }, { title: "title" }],
+      userInfo: null,
     };
   },
   methods: {
     changeStatus() {
       this.follow = !this.follow;
     },
+  },
+  created() {
+    this.userInfo = this.$store.state.userInfo;
+    console.log(this.userInfo);
+    console.log("重新加载数据");
   },
 };
 </script>
@@ -172,8 +184,13 @@ export default {
   position: absolute;
   left: 20px;
   top: -75px;
+  overflow: hidden;
   background: chartreuse;
   border-radius: 50%;
+}
+.userFile img {
+  width: 100%;
+  height: 100%;
 }
 .userInfo {
   display: flex;
