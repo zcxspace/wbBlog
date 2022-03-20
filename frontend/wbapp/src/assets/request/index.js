@@ -46,5 +46,16 @@ async function GetHotWord(num) {
     })
 }
 
-export { getCaptcha, SignUp, SignIn, GetHotWord }
+//发布动态
+async function SentBlog(text, file, userId) {
+    await axios.post('http://120.25.125.57:8080/xhywblog/dynamic/publish', {
+        text: text,
+        file: file,
+        visible: 0,
+        forwardDynamicId: 0,
+        userId: userId,
+    })
+}
+
+export { getCaptcha, SignUp, SignIn, GetHotWord, SentBlog }
 
