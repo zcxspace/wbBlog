@@ -1,6 +1,6 @@
 <template>
   <div :class="[showBack ? 'back' : '']">
-    <div class="setBar" v-if="true">
+    <div class="setBar" v-if="true" :class="[showBack ? 'shotBarWidth' : '']">
       <dialogue-box @yes="deleteAll" @hideDialog="confirm" v-show="dialogShow">
         <template #content>编辑内容将全部消失</template>
       </dialogue-box>
@@ -9,7 +9,8 @@
         <div><slot name="title">快捷发布</slot></div>
         <div>
           <button @click="confirm">
-            <i class="iconfont icon-chahao"></i>
+            删除
+            <!-- <i class="iconfont icon-chahao"></i> -->
           </button>
         </div>
       </div>
@@ -73,6 +74,8 @@
 
 <script>
 import DialogueBox from "../components/common/DialogueBar.vue";
+// import { SentBlog } from "../assets/request/index.js";
+import { mapMutations } from "vuex";
 export default {
   props: {
     showTop: Boolean,
@@ -94,6 +97,7 @@ export default {
     getUrl(e) {
       console.log("我执行了");
       let file = e.target.files[0];
+      console.log(file);
       let that = this;
       let reader = new FileReader();
       reader.readAsDataURL(file);
@@ -101,6 +105,7 @@ export default {
         console.log(that.urls.length);
         that.urls.push(this.result);
       };
+      console.log(this.urls);
     },
     delImg(index) {
       this.urls.splice(index, 1);
@@ -119,9 +124,27 @@ export default {
       this.textarea = "";
       this.dialogShow = !this.dialogShow;
     },
+
+    //异步发送数据
+    // async postNew() {
+    //   SentBlog(this.textarea, this.urls, 22);
+    //   console.log("已经发送了" + this.inputName);
+    // },
+
+    ...mapMutations(["addData"]),
+    //测试发布模块
     postNew() {
-      console.log(this.textarea);
-      console.log(this.urls);
+      let obj = {};
+      obj.text = this.textarea;
+      obj.url = Array.from(this.urls);
+      if (this.textarea && this.urls) {
+        this.addData(obj);
+        this.textarea = "";
+        this.urls = [];
+      } else {
+        console.log("关键信息不能为空");
+      }
+      console.log(this.$store.state.post);
     },
   },
 };
@@ -140,6 +163,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1000;
   height: 100%;
   width: 100%;
   background: rgba(0, 0, 0, 0.4);
@@ -147,12 +171,16 @@ export default {
 .setBar {
   width: 100%;
   height: auto;
-  background: red;
+  background: rgb(211, 210, 210);
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 15px;
   border-radius: 8px;
+}
+.shotBarWidth {
+  width: 800px;
 }
 .text {
   width: 100%;
@@ -275,7 +303,7 @@ export default {
   height: auto;
   padding: 10px;
 }
-.top i {
+.top button {
   color: black;
 }
 </style>
