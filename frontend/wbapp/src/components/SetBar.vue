@@ -1,5 +1,5 @@
 <template>
-  <div :class="[showBack ? 'back' : '']">
+  <div :class="[showBack ? 'back' : '']" v-if="isShow">
     <div class="setBar" v-if="true" :class="[showBack ? 'shotBarWidth' : '']">
       <dialogue-box @yes="deleteAll" @hideDialog="confirm" v-show="dialogShow">
         <template #content>编辑内容将全部消失</template>
@@ -81,12 +81,14 @@ export default {
     showTop: Boolean,
     showBack: Boolean,
     inputName: String,
+    hideAfterSent: Boolean,
   },
   data() {
     return {
       urls: [],
       url: "",
       textarea: "",
+      isShow: true,
       dialogShow: false,
     };
   },
@@ -145,6 +147,8 @@ export default {
         console.log("关键信息不能为空");
       }
       console.log(this.$store.state.post);
+      //点击发送后隐藏
+      this.isShow = !this.hideAfterSent;
     },
   },
 };
