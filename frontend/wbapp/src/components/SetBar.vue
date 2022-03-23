@@ -9,8 +9,7 @@
         <div><slot name="title">快捷发布</slot></div>
         <div>
           <button @click="confirm">
-            删除
-            <!-- <i class="iconfont icon-chahao"></i> -->
+            <slot name="editText">删除</slot>
           </button>
         </div>
       </div>
@@ -26,6 +25,7 @@
         />
       </div>
       <slot :textarea="textarea"></slot>
+
       <div class="img" v-if="urls.length != 0">
         <ul>
           <template v-for="(url, index) of urls" :key="index">
@@ -37,30 +37,15 @@
             </li>
           </template>
           <li class="addBox" v-if="urls.length < 3">
-            <label :for="inputName"
-              ><i class="iconfont icon-jiahao">添加</i></label
-            >
-            <input
-              type="file"
-              :name="inputName"
-              :id="inputName"
-              @change="getUrl"
-            />
+            <i class="confont">字体</i>
+            <input type="file" @change="getUrl" />
           </li>
         </ul>
       </div>
 
       <div class="bottom">
-        <div v-if="urls.length < 3">
-          <label :for="inputName"
-            ><i class="iconfont icon-tupiantianjia">添加</i></label
-          >
-          <input
-            type="file"
-            :name="inputName"
-            :id="inputName"
-            @change="getUrl"
-          />
+        <div class="addBtn" v-if="urls.length < 3">
+          <i class="iconfont">add</i> <input type="file" @change="getUrl" />
         </div>
         <div v-else>最多添加九张图片哦～</div>
 
@@ -74,14 +59,14 @@
 
 <script>
 import DialogueBox from "../components/common/DialogueBar.vue";
-// import { SentBlog } from "../assets/request/index.js";
+import { SentBlog } from "../assets/request/index.js";
 import { mapMutations } from "vuex";
 export default {
   props: {
     showTop: Boolean,
     showBack: Boolean,
-    inputName: String,
     hideAfterSent: Boolean,
+    editInfo: Object,
   },
   data() {
     return {
@@ -90,9 +75,9 @@ export default {
       textarea: "",
       isShow: true,
       dialogShow: false,
+      editFlag: null,
     };
   },
-  emits: ["SetBar"],
   components: { DialogueBox },
   methods: {
     //获取添加图片url
@@ -109,11 +94,15 @@ export default {
       };
       console.log(this.urls);
     },
+
+    //删除已经添加的图片
     delImg(index) {
       this.urls.splice(index, 1);
       console.log(this.urls.length);
     },
+    // 有数据后 删除提示
     confirm() {
+      //若有数据则提示 否则直接删除
       if (this.urls.length == 0 && this.textarea == "") {
         this.$emit("SetBar");
         console.log("隐藏");
@@ -121,6 +110,8 @@ export default {
         this.dialogShow = !this.dialogShow;
       }
     },
+
+    // 清除发布框数据
     deleteAll() {
       this.urls = [];
       this.textarea = "";
@@ -135,21 +126,31 @@ export default {
 
     ...mapMutations(["addData"]),
     //测试发布模块
-    postNew() {
-      let obj = {};
-      obj.text = this.textarea;
-      obj.url = Array.from(this.urls);
-      if (this.textarea && this.urls) {
-        this.addData(obj);
+    async postNew() {
+      if (this.textarea) {
+        let userId = this.$store.state.userInfo.id;
+        console.log(userId);
+        await SentBlog(this.textarea, userId);
         this.textarea = "";
         this.urls = [];
       } else {
         console.log("关键信息不能为空");
       }
-      console.log(this.$store.state.post);
       //点击发送后隐藏
       this.isShow = !this.hideAfterSent;
     },
+  },
+  created() {
+    //编辑信息不为空 则自动填充编辑信息
+    if (JSON.stringify(this.editInfo) !== "{}") {
+      this.textarea = this.editInfo.text;
+      // if (this.editInfo.picUrls.length) {
+      //   for (let url of this.editInfo.picUrls) {
+      //     this.urls.push(url);
+      //   }
+      // }
+      this.editFlag = true;
+    } else this.editFlag = false;
   },
 };
 </script>
@@ -208,6 +209,15 @@ export default {
   justify-content: space-between;
   align-items: center;
 }
+.addBtn {
+  position: relative;
+  border: 2px solid black;
+  width: 80px;
+  height: 40px;
+}
+.addBtn i {
+  pointer-events: none;
+}
 .bottom .img {
   padding: 5px;
   width: 100%;
@@ -231,6 +241,15 @@ export default {
   border-radius: 5px;
   overflow: hidden;
 }
+.addBox i,
+.addBtn i {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .bottom input,
 .addBox input {
   opacity: 0;
@@ -241,7 +260,7 @@ export default {
 }
 .bottom label:hover i {
   color: royalblue;
-  font-size: 45px;
+  font-size: 20px;
 }
 .imgBox button {
   position: absolute;

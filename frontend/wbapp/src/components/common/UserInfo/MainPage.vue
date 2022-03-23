@@ -93,7 +93,7 @@ export default {
   created() {
     this.userInfo = this.$store.state.userInfo;
     console.log(this.userInfo);
-    console.log("重新加载数据");
+    console.log("用户信息页");
   },
 };
 </script>

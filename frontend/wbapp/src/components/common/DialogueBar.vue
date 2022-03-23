@@ -2,7 +2,7 @@
   <div class="bg" v-if="dialogShow">
     <div class="box">
       <div class="title">
-        <h2><slot name="title">确认删除么？</slot></h2>
+        <h2><slot name="title">确认取消吗？</slot></h2>
       </div>
       <div class="content"><slot name="content">内容</slot></div>
       <div class="btn">
