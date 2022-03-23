@@ -15,6 +15,8 @@
       :showBack="true"
       :hideAfterSent="true"
       :editInfo="editInfo"
+      :textareaHeight="4"
+      :placeholder="'有什么新鲜事想分享给大家？'"
       @SetBar="isShowBar = !isShowBar"
       v-if="isShowBar"
     >
@@ -69,9 +71,43 @@
     </div>
     <!-- 转发动态区结束 -->
     <div class="tabs">
-      <div class="forward"><button>转发</button></div>
-      <div class="comments"><button>评论</button></div>
-      <div class="likes"><button @click="test">点赞</button></div>
+      <div class="forward"><button @click="showForward">转发</button></div>
+      <div class="comments"><button @click="showComment">评论</button></div>
+      <div class="likes">
+        <button @click="test" :class="[isLike ? 'like' : '']">点赞</button>
+      </div>
+    </div>
+    <!-- 转发编辑模块 -->
+    <div class="functionBar" v-show="isForwardShow">
+      <div class="avatar">
+        <img src="" alt="" />
+      </div>
+      <div class="editArea">
+        <!-- 转发区 -->
+        <div class="forwardBar">
+          <set-bar
+            class="setBar"
+            :showBack="false"
+            :showTop="false"
+            :textareaHeight="1"
+            :hideAfterSent="false"
+            :placeholder="'分享说说心得'"
+            :editInfo="{}"
+          >
+            <template #btnName>转发</template>
+          </set-bar>
+        </div>
+      </div>
+    </div>
+
+    <div class="functionBar" v-show="isCommentShow">
+      <div class="avatar">
+        <img src="" alt="" />
+      </div>
+      <div class="editArea">
+        <!-- 转发区 -->
+        <div class="commentBar">现在显示评论区</div>
+      </div>
     </div>
   </div>
 </template>
@@ -82,9 +118,11 @@ import DialogueBar from "../DialogueBar.vue";
 import {
   DeleteDynamic,
   editDynamic,
+  isLike,
 } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
 export default {
   components: { SetBar, DialogueBar },
+
   props: {
     dynamicInfo: Object,
   },
@@ -92,7 +130,9 @@ export default {
     return {
       // 显示右侧功能菜单
       isShowMenu: false,
+      // 展示确认对话框
       isShowDialog: false,
+      //展示编辑框
       isShowBar: false,
       // 获取动态id
       dynamicId: this.dynamicInfo.id,
@@ -101,13 +141,28 @@ export default {
         text: this.dynamicInfo.text,
         // urls:this.dynamicInfo.file,
       },
+      //默认隐藏评论与转发
+      isForwardShow: false,
+      isCommentShow: false,
+      //切换点赞效果
+      isLike: false,
     };
   },
 
   methods: {
+    //删除动态接口
     async deleteDynamic() {
       let result = await DeleteDynamic(this.dynamicId);
       console.log(result);
+    },
+    //点击切换评论与转发模块
+    showForward() {
+      this.isForwardShow = !this.isForwardShow;
+      this.isCommentShow = false;
+    },
+    showComment() {
+      this.isCommentShow = !this.isCommentShow;
+      this.isForwardShow = false;
     },
     showBar() {
       this.isShowBar = !this.isShowBar;
@@ -115,9 +170,21 @@ export default {
     hideShowDialog() {
       this.isShowDialog = !this.isShowDialog;
     },
+    //编辑微博接口
     async editDyn() {
       let result = await editDynamic(this.dynamicId, this.text, this.file);
       console.log(result);
+    },
+    //点赞接口
+    async test() {
+      this.isLike = !this.isLike;
+      if (this.isLike) {
+        let result = await isLike(this.dynamicId, "Like");
+        console.log(result);
+      } else {
+        let result = await isLike(this.dynamicId, "Dislike");
+        console.log(result);
+      }
     },
   },
 };
@@ -179,12 +246,13 @@ li {
   align-items: center;
   justify-content: center;
 }
-.tabs div:hover {
+.tabs div:hover button {
   color: chocolate;
 }
 .tabs div button {
   width: 100%;
   height: 100%;
+  outline: none;
   background: transparent;
   border: 0;
 }
@@ -316,5 +384,42 @@ li {
 }
 .menuBox ul li:hover {
   background: lightgrey;
+}
+.functionBar {
+  width: 100%;
+  height: auto;
+  padding: 10px 0 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+  margin: 0 20px;
+}
+.avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: chartreuse;
+}
+.editArea {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  background: chocolate;
+}
+.forwardBar {
+  width: 400px;
+  flex: 1;
+}
+.forwardBar .setBar {
+  width: 100%;
+}
+
+.like {
+  color: rgb(206, 99, 0);
 }
 </style>
