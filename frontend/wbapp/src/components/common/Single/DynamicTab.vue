@@ -16,6 +16,8 @@
       :hideAfterSent="true"
       :editInfo="editInfo"
       :textareaHeight="4"
+      :useTo="'edit'"
+      :editId="dynamicId"
       :placeholder="'有什么新鲜事想分享给大家？'"
       @SetBar="isShowBar = !isShowBar"
       v-if="isShowBar"
@@ -28,7 +30,7 @@
       字
       <div class="menuBox" v-show="isShowMenu">
         <ul>
-          <li @click="showBar(), editDyn()">编辑微博</li>
+          <li @click="showBar()">编辑微博</li>
           <li @click="isShowDialog = true">删除微博</li>
         </ul>
       </div>
@@ -36,7 +38,7 @@
 
     <!-- 头部用户信息区 -->
     <div class="userInfo">
-      <img src="" alt="" />
+      <img src="" alt="" @click="test1" />
       <h2>微博用户001</h2>
     </div>
     <!-- 头部信息区结束 -->
@@ -55,10 +57,16 @@
       <!-- 中间内容区结束 -->
 
       <!-- 转发动态区 -->
-      <div class="forwardBar" v-if="false">
+      <div class="forwardBar">
         <div class="forwardId">被转发者id</div>
         <div class="forwardText">转发信息</div>
-        <div class="forwardPhotos">转发图片</div>
+        <div class="forwardPhotos">
+          <ul>
+            <li>
+              <img :src="url" alt="转发的图片" />
+            </li>
+          </ul>
+        </div>
         <div class="forwardTabs">
           <div class="time">发布时间</div>
           <div class="bar">
@@ -92,7 +100,9 @@
             :textareaHeight="1"
             :hideAfterSent="false"
             :placeholder="'分享说说心得'"
+            :useTo="'forward'"
             :editInfo="{}"
+            :forwardId="dynamicId"
           >
             <template #btnName>转发</template>
           </set-bar>
@@ -101,27 +111,21 @@
     </div>
 
     <div class="functionBar" v-show="isCommentShow">
-      <div class="avatar">
-        <img src="" alt="" />
-      </div>
-      <div class="editArea">
-        <!-- 转发区 -->
-        <div class="commentBar">现在显示评论区</div>
-      </div>
+      <comment-bar></comment-bar>
     </div>
   </div>
 </template>
 
 <script>
+import CommentBar from "../../CommentBar.vue";
 import SetBar from "../../SetBar.vue";
 import DialogueBar from "../DialogueBar.vue";
 import {
   DeleteDynamic,
-  editDynamic,
   isLike,
 } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
 export default {
-  components: { SetBar, DialogueBar },
+  components: { SetBar, DialogueBar, CommentBar },
 
   props: {
     dynamicInfo: Object,
@@ -153,6 +157,7 @@ export default {
     //删除动态接口
     async deleteDynamic() {
       let result = await DeleteDynamic(this.dynamicId);
+      console.log(this.dynamicId);
       console.log(result);
     },
     //点击切换评论与转发模块
@@ -170,11 +175,7 @@ export default {
     hideShowDialog() {
       this.isShowDialog = !this.isShowDialog;
     },
-    //编辑微博接口
-    async editDyn() {
-      let result = await editDynamic(this.dynamicId, this.text, this.file);
-      console.log(result);
-    },
+
     //点赞接口
     async test() {
       this.isLike = !this.isLike;
@@ -185,6 +186,9 @@ export default {
         let result = await isLike(this.dynamicId, "Dislike");
         console.log(result);
       }
+    },
+    test1() {
+      console.log(this.dynamicId);
     },
   },
 };
@@ -312,6 +316,24 @@ li {
   min-height: 135px;
   background: green;
 }
+.forwardPhotos ul {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+}
+.forwardPhotos ul li {
+  width: 133px;
+  height: 133px;
+  background: red;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 10px;
+}
+.forwardPhotos ul li img {
+  width: 100%;
+  height: 100%;
+}
 .photos .imageBox {
   width: 100%;
   height: 100%;
@@ -411,10 +433,10 @@ li {
   justify-content: flex-start;
   background: chocolate;
 }
-.forwardBar {
+/* .forwardBar {
   width: 400px;
   flex: 1;
-}
+} */
 .forwardBar .setBar {
   width: 100%;
 }
