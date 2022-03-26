@@ -45,7 +45,25 @@
 
     <!-- 中间内容区 -->
     <div class="content">
-      <div class="text"><p v-html="Text" class="forwardT"></p></div>
+      <div class="text">
+        <div class="forwardT">
+          <!-- 如果是不是转发 则显示正常文本 -->
+          <div class="normal" v-if="isShowText">
+            {{ this.dynamicInfo.text }}
+          </div>
+          <!-- 如果是 则遍历转发数据 -->
+          <div class="forwardText" v-else>
+            {{ this.dynamicInfo.text }}
+            <template
+              v-for="(item, index) of this.dynamicInfo.forwardTexts"
+              :key="index"
+            >
+              //<router-link to="/">@{{ item.name }}</router-link
+              >:{{ item.text }}
+            </template>
+          </div>
+        </div>
+      </div>
       <div class="photos" v-if="hasPhotos">
         <!-- 图片区 -->
         <!-- <div class="photos" v-if="url.length != 0"> -->
@@ -164,16 +182,12 @@ export default {
     },
 
     //处理转发信息
-    Text() {
+    isShowText() {
+      //如果是转发
       if (this.dynamicInfo.forwardDynamicId) {
-        let rawHtml = "";
-        for (let text of this.dynamicInfo.forwardTexts) {
-          rawHtml += `//<a href="#" @click.prevent="test02">@${text.name}</a>:${text.text}`;
-        }
-        let text = this.dynamicInfo.text + rawHtml;
-        return text;
+        return false;
       } else {
-        return `${this.dynamicInfo.text}`;
+        return true;
       }
     },
   },
@@ -311,7 +325,8 @@ li {
   display: flex;
   align-items: center;
 }
-.forwardT {
+
+.forwardT div {
   display: flex;
   justify-content: flex-start;
   flex-flow: row wrap;
