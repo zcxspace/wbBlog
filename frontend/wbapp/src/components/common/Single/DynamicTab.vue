@@ -26,7 +26,7 @@
       <template #editText>取消编辑</template>
     </set-bar>
     <!-- 下拉列表区 -->
-    <div class="selectMenu" @click="isShowMenu = !isShowMenu">
+    <div class="selectMenu" @click="isShowMenu = !isShowMenu" v-if="checkUser">
       字
       <div class="menuBox" v-show="isShowMenu">
         <ul>
@@ -39,17 +39,18 @@
     <!-- 头部用户信息区 -->
     <div class="userInfo">
       <img src="" alt="" @click="test1" />
-      <h2>微博用户001</h2>
+      <h2>名字</h2>
     </div>
     <!-- 头部信息区结束 -->
 
     <!-- 中间内容区 -->
     <div class="content">
-      <div class="text">{{ dynamicInfo.text }}</div>
-      <div class="photos" v-if="false">
+      <div class="text"><p v-html="Text" class="forwardT"></p></div>
+      <div class="photos" v-if="hasPhotos">
+        <!-- 图片区 -->
         <!-- <div class="photos" v-if="url.length != 0"> -->
         <ul class="imageBox">
-          <li v-for="(u, index) of url" :key="index">
+          <li v-for="(u, index) of pics" :key="index">
             <img :src="u" alt="" />
           </li>
         </ul>
@@ -57,25 +58,11 @@
       <!-- 中间内容区结束 -->
 
       <!-- 转发动态区 -->
-      <div class="forwardBar">
-        <div class="forwardId">被转发者id</div>
-        <div class="forwardText">转发信息</div>
-        <div class="forwardPhotos">
-          <ul>
-            <li>
-              <img :src="url" alt="转发的图片" />
-            </li>
-          </ul>
-        </div>
-        <div class="forwardTabs">
-          <div class="time">发布时间</div>
-          <div class="bar">
-            <button>转发</button>
-            <button>评论</button>
-            <button>点赞</button>
-          </div>
-        </div>
-      </div>
+      <forward-tab
+        v-if="this.dynamicInfo.forwardDynamicId"
+        :forwardDynamic="this.dynamicInfo.forwardDynamic"
+        :forwardTexts="this.dynamicInfo.forwardTexts"
+      ></forward-tab>
     </div>
     <!-- 转发动态区结束 -->
     <div class="tabs">
@@ -120,12 +107,15 @@
 import CommentBar from "../../CommentBar.vue";
 import SetBar from "../../SetBar.vue";
 import DialogueBar from "../DialogueBar.vue";
+import ForwardTab from "./ForwardTab.vue";
+import { mapMutations } from "vuex";
 import {
   DeleteDynamic,
   isLike,
+  GetPublic,
 } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
 export default {
-  components: { SetBar, DialogueBar, CommentBar },
+  components: { SetBar, DialogueBar, CommentBar, ForwardTab },
 
   props: {
     dynamicInfo: Object,
@@ -143,6 +133,7 @@ export default {
       //打包该动态所编辑的的信息
       editInfo: {
         text: this.dynamicInfo.text,
+        Urls: this.dynamicInfo.filePath,
         // urls:this.dynamicInfo.file,
       },
       //默认隐藏评论与转发
@@ -152,13 +143,54 @@ export default {
       isLike: false,
     };
   },
+  computed: {
+    //没有user则显示 功下拉框
+    checkUser() {
+      return this.dynamicInfo.userId == this.$store.state.userInfo.id
+        ? true
+        : false;
+    },
+    //判断返回动态是否为转发
+    // forwardInfo() {
+    //   return this.dynamicInfo.forwardDynamicId != 0
+    //     ? this.dynamicInfo.forwardDynamic
+    //     : {};
+    // },
+    hasPhotos() {
+      return this.dynamicInfo.filePath ? true : false;
+    },
+    pics() {
+      return this.dynamicInfo.filePath ? this.dynamicInfo.filePath : [];
+    },
 
+    //处理转发信息
+    Text() {
+      if (this.dynamicInfo.forwardDynamicId) {
+        let rawHtml = "";
+        for (let text of this.dynamicInfo.forwardTexts) {
+          rawHtml += `//<a href="#" @click.prevent="test02">@${text.name}</a>:${text.text}`;
+        }
+        let text = this.dynamicInfo.text + rawHtml;
+        return text;
+      } else {
+        return `${this.dynamicInfo.text}`;
+      }
+    },
+  },
   methods: {
+    test02() {
+      console.log("test02");
+    },
+    ...mapMutations(["updateHomePageDynamic"]),
     //删除动态接口
     async deleteDynamic() {
       let result = await DeleteDynamic(this.dynamicId);
       console.log(this.dynamicId);
       console.log(result);
+
+      let publicD = await GetPublic();
+      let publicDynamic = publicD.data.data;
+      this.updateHomePageDynamic(publicDynamic);
     },
     //点击切换评论与转发模块
     showForward() {
@@ -189,7 +221,15 @@ export default {
     },
     test1() {
       console.log(this.dynamicId);
+      console.log(this.dynamicInfo);
+      console.log(this.dynamicInfo.user);
     },
+  },
+  created() {
+    console.log(this.dynamicInfo.userId);
+    console.log(this.hasPhotos);
+    // console.log(this.$store.state.userInfo.id);
+    // console.log(this.dynamicInfo.user.id);
   },
 };
 </script>
@@ -208,7 +248,7 @@ li {
   width: 100%;
   height: auto;
   padding: 20px 20px 0 20px;
-  background: rgb(219, 215, 215);
+  background: rgb(235, 230, 230);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -270,8 +310,11 @@ li {
   width: 100%;
   display: flex;
   align-items: center;
+}
+.forwardT {
+  display: flex;
   justify-content: flex-start;
-  /* background: yellow; */
+  flex-flow: row wrap;
 }
 .photos {
   flex: 1;
@@ -280,97 +323,23 @@ li {
 
   /* background: chocolate; */
 }
-.forwardBar {
-  width: 100%;
-  height: auto;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  /* background: darkgoldenrod; */
-}
-.forwardId {
-  width: 100%;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  background: purple;
-}
-.forwardText {
-  width: 100%;
-  min-height: 60px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  background: pink;
-}
-.forwardTabs {
-  width: 100%;
-  height: 30px;
-  display: flex;
-  background: hotpink;
-  justify-content: space-between;
-  align-items: center;
-}
-.forwardPhotos {
-  width: 100%;
-  min-height: 135px;
-  background: green;
-}
-.forwardPhotos ul {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: flex-start;
-}
-.forwardPhotos ul li {
-  width: 133px;
-  height: 133px;
-  background: red;
-  border-radius: 5px;
-  overflow: hidden;
-  margin: 10px;
-}
-.forwardPhotos ul li img {
-  width: 100%;
-  height: 100%;
-}
 .photos .imageBox {
-  width: 100%;
-  height: 100%;
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 30px;
-}
-.photos .imageBox li {
-  width: 133px;
-  height: 135px;
-  list-style: none;
-  border-radius: 10px;
-  overflow: hidden;
 }
 .photos .imageBox li img {
   width: 100%;
   height: 100%;
 }
-.bar {
-  height: 100%;
-  width: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.photos .imageBox li {
+  width: 135px;
+  height: 135px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 10px;
 }
-.bar div {
-  flex: 1;
-  background: red;
-}
-.bar div button {
-  width: 40px;
-}
-.time {
-  width: auto;
-  background: red;
-}
+
 .selectMenu {
   width: 35px;
   height: 35px;
@@ -433,11 +402,12 @@ li {
   justify-content: flex-start;
   background: chocolate;
 }
-/* .forwardBar {
-  width: 400px;
+
+.forwardBar {
   flex: 1;
-} */
-.forwardBar .setBar {
+}
+
+.editArea .setBar {
   width: 100%;
 }
 
