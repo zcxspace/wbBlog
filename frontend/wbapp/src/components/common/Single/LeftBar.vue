@@ -7,14 +7,12 @@
       <ul class="tabBox">
         <!-- <li v-for="tab of tabsArr" :key="tab.com"> -->
         <!-- <div class="icon"><i class="inconfont" :class="tab.icon"></i>字体图标</div> -->
-        <li
-          v-for="tab of tabsArr"
-          :key="tab.comName"
-          @click="nowTabName = tab.comName"
-          :class="[nowTabName == tab.comName ? 'active' : '']"
-        >
+        <li v-for="com of ComArr" :key="com.comName">
           <div class="icon">字体</div>
-          {{ tab.comName }}
+          <router-link
+            :to="{ name: `${com.comName}`, params: { type: `${com.type}` } }"
+            >{{ com.comName }}</router-link
+          >
         </li>
       </ul>
     </div>
@@ -24,17 +22,10 @@
 <script>
 export default {
   props: {
-    tabsArr: Array,
+    ComArr: Array,
   },
   data() {
-    return {
-      nowTabName: this.tabsArr[0].comName,
-    };
-  },
-  methods: {
-    sentComName() {
-      return this.nowTabName;
-    },
+    return {};
   },
 };
 </script>
