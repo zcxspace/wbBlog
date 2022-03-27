@@ -39,7 +39,7 @@
     <!-- 头部用户信息区 -->
     <div class="userInfo">
       <img src="" alt="" @click="test1" />
-      <h2>名字</h2>
+      <h2>{{ getName }}</h2>
     </div>
     <!-- 头部信息区结束 -->
 
@@ -58,7 +58,12 @@
               v-for="(item, index) of this.dynamicInfo.forwardTexts"
               :key="index"
             >
-              //<router-link to="/">@{{ item.name }}</router-link
+              //<router-link
+                :to="{
+                  name: 'userInfo',
+                  params: { path: `${item.profileUrl.match(/u\d+/)[0]}` },
+                }"
+                >@{{ item.name }}</router-link
               >:{{ item.text }}
             </template>
           </div>
@@ -137,6 +142,7 @@ export default {
 
   props: {
     dynamicInfo: Object,
+    userInfo: Object,
   },
   data() {
     return {
@@ -152,7 +158,6 @@ export default {
       editInfo: {
         text: this.dynamicInfo.text,
         Urls: this.dynamicInfo.filePath,
-        // urls:this.dynamicInfo.file,
       },
       //默认隐藏评论与转发
       isForwardShow: false,
@@ -162,6 +167,13 @@ export default {
     };
   },
   computed: {
+    getName() {
+        //若user为不为null 则返回user.name 否则返回提供的信息
+        // 当user为null时 如果访问 user.属性 则会报错！！！！！
+      return this.dynamicInfo.user
+        ? this.dynamicInfo.user.name
+        : this.userInfo.name;
+    },
     //没有user则显示 功下拉框
     checkUser() {
       return this.dynamicInfo.userId == this.$store.state.userInfo.id
@@ -242,6 +254,7 @@ export default {
   created() {
     console.log(this.dynamicInfo.userId);
     console.log(this.hasPhotos);
+    console.log(this.userInfo);
     // console.log(this.$store.state.userInfo.id);
     // console.log(this.dynamicInfo.user.id);
   },
