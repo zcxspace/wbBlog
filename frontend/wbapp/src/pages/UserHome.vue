@@ -3,6 +3,7 @@
     <main-layout>
       <template #userPage> 用户页 </template>
       <template #center>
+        <!-- 防止组件复用而不刷新 -->
         <router-view :key="$route.fullPath"></router-view>
       </template>
 
@@ -24,7 +25,7 @@ export default {
     return {
       show: true,
       dynamics: this.$store.state.userDynamic,
-      ComArr: [{ comName: "HomePage1", type: "HomePage" }],
+      ComArr: [{ comName: "HomePage" }],
     };
   },
   computed: {
