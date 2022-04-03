@@ -1,22 +1,23 @@
 <template>
-  <div class="page">
+  <div
+    class="page"
+    v-infinite-scroll="load"
+    infinite-scroll-distance="50"
+    style="overflow: auto"
+  >
     <main-layout>
       <template #center-left>
-        <ul class="leftBar">
-          <li
-            v-for="(list, index) of leftLists"
-            :key="list.com"
-            @click="nowComActive = list.com"
-          >
-            {{ list.title }} {{ index }}
-          </li>
-        </ul>
+        <left-bar :ComArr="ComArr">
+          <template #title>个人主页</template>
+        </left-bar>
       </template>
 
       <template #center>
-        <keep-alive>
-          <component :is="nowComActive"></component>
-        </keep-alive>
+        <router-view v-slot="{ Component }" :key="$route.fullPath">
+          <keep-alive>
+            <component :is="Component" v-if="$route.meta.keepAlive"></component>
+          </keep-alive>
+        </router-view>
       </template>
 
       <template #center-right>右侧</template>
@@ -26,24 +27,43 @@
 
 <script>
 import MainLayout from "../layouts/MainLayout.vue";
-import MainPage from "../components/common/UserInfo/MainPage.vue";
-import ChangeInfo from "../components/common/UserInfo/ChangeInfo.vue";
+import LeftBar from "../components/common/Single/LeftBar.vue";
 
 export default {
   components: {
     MainLayout,
-    MainPage,
-    ChangeInfo,
+    LeftBar,
   },
   data() {
     return {
-      isShowTop: false,
-      nowComActive: "MainPage",
-      leftLists: [
-        { title: "我的主页", com: "MainPage" },
-        { title: "编辑信息", com: "ChangeInfo" },
-      ],
+      ComArr: [{ comName: "MuserInfo" }, { comName: "ChangeInfo" }],
     };
+  },
+  computed: {
+    noMore() {
+      return this.NowDisNum >= this.$store.state.userDynamic.length;
+    },
+  },
+  methods: {
+    //更新当前页面组件
+    updateCom() {
+      this.nowComActive = this.$refs.PageLeftRef.sentComName();
+      console.log(this.nowComActive);
+    },
+    // 无限滚动测试
+    load() {
+      if (!this.noMore) {
+        this.Loading = true;
+        setTimeout(() => {
+          this.NowDisNum += 1;
+          this.Loading = false;
+          console.log(this.NowDisNum);
+        }, 1000);
+      } else return;
+    },
+  },
+  created() {
+    console.log(this.$store.state.userInfo);
   },
 };
 </script>
@@ -65,7 +85,9 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: black;
   margin-bottom: 5px;
+}
+.leftBar li:hover {
+  background: rgb(145, 142, 142);
 }
 </style>

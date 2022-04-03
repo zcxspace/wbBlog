@@ -1,0 +1,18 @@
+/* 修改发布框文本框 */
+.el-textarea__inner {
+    background:transparent;
+    color:black;
+    resize: none;
+    border: 0;
+    font-size: 23px;
+    outline: none;
+}
+.el-textarea__inner:focus {
+    border: 2px solid #ff8200;
+    
+    box-shadow: none;
+}
+
+.el-textarea__inner::placeholder {
+    color: rgb(68, 66, 66);
+}

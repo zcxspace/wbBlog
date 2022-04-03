@@ -121,13 +121,17 @@
     </div>
 
     <div class="functionBar" v-show="isCommentShow">
-      <comment-bar></comment-bar>
+      <!-- 显示评论区时再渲染评论组件 -->
+      <comment-bar
+        :dynamicInfo="dynamicInfo"
+        v-if="isCommentShow"
+        :openAll="openAll"
+      ></comment-bar>
     </div>
   </div>
 </template>
 
 <script>
-import CommentBar from "../../CommentBar.vue";
 import SetBar from "../../SetBar.vue";
 import DialogueBar from "../DialogueBar.vue";
 import ForwardTab from "./ForwardTab.vue";
@@ -137,8 +141,9 @@ import {
   isLike,
   GetPublic,
 } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
+import CommentBar from "../../CommentBar.vue";
 export default {
-  components: { SetBar, DialogueBar, CommentBar, ForwardTab },
+  components: { SetBar, DialogueBar, ForwardTab, CommentBar },
 
   props: {
     dynamicInfo: Object,
@@ -146,6 +151,7 @@ export default {
   },
   data() {
     return {
+      openAll: false,
       // 显示右侧功能菜单
       isShowMenu: false,
       // 展示确认对话框
@@ -168,8 +174,8 @@ export default {
   },
   computed: {
     getName() {
-        //若user为不为null 则返回user.name 否则返回提供的信息
-        // 当user为null时 如果访问 user.属性 则会报错！！！！！
+      //若user为不为null 则返回user.name 否则返回提供的信息
+      // 当user为null时 如果访问 user.属性 则会报错！！！！！
       return this.dynamicInfo.user
         ? this.dynamicInfo.user.name
         : this.userInfo.name;
@@ -180,12 +186,6 @@ export default {
         ? true
         : false;
     },
-    //判断返回动态是否为转发
-    // forwardInfo() {
-    //   return this.dynamicInfo.forwardDynamicId != 0
-    //     ? this.dynamicInfo.forwardDynamic
-    //     : {};
-    // },
     hasPhotos() {
       return this.dynamicInfo.filePath ? true : false;
     },
@@ -204,6 +204,10 @@ export default {
     },
   },
   methods: {
+    openAllCom() {
+      // this.$refs.comment.sayHi();
+      this.openAll = !this.openAll;
+    },
     test02() {
       console.log("test02");
     },
@@ -227,6 +231,7 @@ export default {
       this.isCommentShow = !this.isCommentShow;
       this.isForwardShow = false;
     },
+    getComment() {},
     showBar() {
       this.isShowBar = !this.isShowBar;
     },
@@ -275,7 +280,8 @@ li {
   width: 100%;
   height: auto;
   padding: 20px 20px 0 20px;
-  background: rgb(235, 230, 230);
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(18, 18, 18, 0.1);
   border-radius: 10px;
   display: flex;
   flex-direction: column;

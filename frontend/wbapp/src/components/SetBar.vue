@@ -30,10 +30,10 @@
       <div class="img" v-if="displayUrls.length != 0">
         <ul>
           <!-- 图片展示区 -->
-          <template v-for="(url, index) of displayUrls" :key="index">
+          <template v-for="url of displayUrls" :key="url">
             <li class="imgBox">
               <img :src="url" alt="自定义" />
-              <button @click="delImg(index)">
+              <button @click="delImg(url)">
                 <i class="iconfont icon-chahao"></i>
               </button>
             </li>
@@ -87,6 +87,8 @@ export default {
       isShow: true,
       dialogShow: false,
       editFlag: null,
+      editArr: null,
+      copyArr: null,
     };
   },
   components: { DialogueBox },
@@ -112,9 +114,15 @@ export default {
     },
 
     //删除已经添加的图片
-    delImg(index) {
+    delImg(url) {
+      //获取对标数组
+      if (this.copyArr.includes(url)) {
+        let index = this.copyArr.indexOf(url);
+        this.editArr.splice(index, 1, 1);
+      }
+      let index = this.displayUrls.indexOf(url);
       this.displayUrls.splice(index, 1);
-      console.log(this.displayUrls.length);
+      this.editArr[index] = 1;
     },
     // 有数据后 删除提示
     confirm() {
@@ -133,12 +141,6 @@ export default {
       this.textarea = "";
       this.dialogShow = !this.dialogShow;
     },
-
-    //异步发送数据
-    // async postNew() {
-    //   SentBlog(this.textarea, this.urls, 22);
-    //   console.log("已经发送了" + this.inputName);
-    // },
 
     ...mapMutations(["addData", "updateUserInfo", "updateHomePageDynamic"]),
     //测试发布模块
@@ -170,13 +172,13 @@ export default {
           await SentBlog(form);
         } else if (this.useTo == "edit") {
           form.append("id", this.editId);
+          form.append("fileArray", this.editArr);
           await SentBlog(form);
         }
 
         let result = await GetPublic();
         let publicDynamic = result.data.data;
         this.updateHomePageDynamic(publicDynamic);
-        // console.log(this.$store.state.HomePageDynamic);
         this.textarea = "";
         this.displayUrls = [];
       } else {
@@ -193,8 +195,15 @@ export default {
       this.textarea = this.editInfo.text;
       if (this.editInfo.Urls) {
         this.displayUrls = this.editInfo.Urls;
+        //返回编辑数组 传给后端进行判断
+        this.copyArr = this.displayUrls.slice();
+        let arr = [];
+        for (let i = 0; i < this.displayUrls.length; i++) {
+          arr.push(0);
+        }
+        console.log(this.displayUrls);
+        this.editArr = arr;
       } else console.log("图片为空");
-      console.log(this.editInfo.Urls);
       this.editFlag = true;
     } else this.editFlag = false;
   },

@@ -2,13 +2,13 @@
   <div class="myPage">
     <el-affix :offset="80">
       <div class="top">
-        <div class="goBackTab"><button>返回</button></div>
+        <div class="goBackTab"><button @click="goBack">返回</button></div>
       </div>
     </el-affix>
 
     <div class="infoBar">
       <div class="userFile">
-        <img :src="userInfo.profileUrl" alt="用户头像" />
+        <img src="#" alt="用户头像" />
       </div>
 
       <div class="userInfo">
@@ -63,14 +63,29 @@
           </li>
         </ul>
       </div>
+      <component
+        :is="currentTab"
+        :dynamics="dynamics"
+        :userInfo="userInfo"
+      ></component>
     </div>
   </div>
 </template>
 
 <script>
+import blog from "../UserInfo/MainPages/blogPage.vue";
+import { getUserInfo } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
 export default {
+  props: {
+    path: String,
+  },
+  name: "MuserInfo",
+
   data() {
     return {
+      userInfo: null,
+      dynamics: null,
+      uid: this.path,
       follow: false,
       isShrink: true,
       currentTab: "blog",
@@ -81,19 +96,39 @@ export default {
         { title: "视频", com: "video" },
         { title: "相册", com: "album" },
       ],
-      infos: [{ title: "title" }, { title: "title" }, { title: "title" }],
-      userInfo: null,
+      height: null,
     };
   },
+  components: {
+    blog,
+  },
   methods: {
+    goBack() {
+      this.$router.go(-1);
+    },
     changeStatus() {
       this.follow = !this.follow;
     },
+    watch: {
+      uid(newUid, oldUid) {
+        console.log(newUid);
+        console.log(oldUid);
+      },
+    },
   },
-  created() {
-    this.userInfo = this.$store.state.userInfo;
-    console.log(this.userInfo);
-    console.log("用户信息页");
+
+  async created() {
+    //如果为随机用户跳转则获取地址
+    if (this.path) {
+      let path = "http://120.25.125.57:8080/xhywblog/users/" + this.path;
+      let result = await getUserInfo(path);
+      this.userInfo = result.data.data.user;
+      this.dynamics = result.data.data.dynamic;
+    } else {
+      this.userInfo = this.$store.state.userInfo;
+      this.dynamics = this.$store.state.userDynamic;
+    }
+    // console.log(this.path);
   },
 };
 </script>
@@ -185,10 +220,12 @@ export default {
   left: 20px;
   top: -75px;
   overflow: hidden;
-  background: chartreuse;
+  background: whitesmoke;
   border-radius: 50%;
+  padding: 10px;
 }
 .userFile img {
+  background: yellowgreen;
   width: 100%;
   height: 100%;
 }
@@ -200,7 +237,6 @@ export default {
   min-height: 80px;
   padding-right: 50px;
   align-items: center;
-  background: chocolate;
 }
 .follow button {
   height: 45px;

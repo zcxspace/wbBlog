@@ -1,5 +1,10 @@
 import axios from 'axios'
 axios.defaults.withCredentials = true;
+
+
+let config = {
+    headers: { "Content-Type": "multipart/form-data" },
+};
 //接收验证码请求
 async function getCaptcha() {
     return await axios.post('http://120.25.125.57:8080/xhywblog/users/captcha/?time=' + new Date().getTime())
@@ -30,32 +35,125 @@ async function SignIn(email, password, captcha) {
         email: email,
         password: password,
         captcha: captcha,
-    })
+    });
     return obj;
 }
+//获取用户信息
+async function getUserInfo(path) {
+    let result = await axios.post(`${path}`, {})
+    return result;
+}
+//更换头像 
+async function changeProfile(form) {
+    let result = await axios.post('http://120.25.125.57:8080/xhywblog/users/photoImage',
+        form
+        , config
+    )
+    return result;
+}
 
-
+//更改用户信息 
+async function changeUserInfo(name, address, intro, birthday, phone, job, trait, interests, gender) {
+    console.log("更新了")
+    let result = axios.post(' http://120.25.125.57:8080/xhywblog/users/update', {
+        name: name,
+        address: address,
+        intro: intro,
+        birthday: birthday,
+        phone: phone,
+        job: job,
+        interests: interests,
+        trait: trait,
+        gender: gender
+    })
+    return result;
+}
 // 获取动态热榜
 async function GetHotWord(num) {
     await axios.post('http://120.25.125.57:8080/xhywblog/dynamic/getHotDynamic', {
-        num = num,
+        num: num,
     }).then((res) => {
         console.log(res)
     }).catch((e) => {
         console.log(e)
     })
 }
-
+// 获取公共动态 
+async function GetPublic() {
+    let result = await axios.post(' http://120.25.125.57:8080/xhywblog/dynamic/getNewDynamic');
+    return result;
+}
 //发布动态
-async function SentBlog(text, file, userId) {
-    await axios.post('http://120.25.125.57:8080/xhywblog/dynamic/publish', {
-        text: text,
-        file: file,
-        visible: 0,
-        forwardDynamicId: 0,
-        userId: userId,
+
+async function SentBlog(form,) {
+
+    await axios.post('http://120.25.125.57:8080/xhywblog/dynamic/publish'
+        , form, config).then((res) => {
+            console.log(res)
+        }).catch((e) => {
+            console.log(e)
+        })
+}
+//编辑动态
+async function editDynamic(form) {
+    let config = {
+        headers: { "Content-Type": "multipart/form-data" },
+    };
+    let result = await axios.post(' http://120.25.125.57:8080/xhywblog/dynamic/publish', form, config)
+    return result;
+}
+//删除动态 
+async function DeleteDynamic(id) {
+    let result = await axios.post('http://120.25.125.57:8080/xhywblog/dynamic/remove', {
+        id: id,
     })
+    return result;
 }
 
-export { getCaptcha, SignUp, SignIn, GetHotWord, SentBlog }
+//点赞
+async function isLike(id, action) {
+    if (action == '点赞') {
+        let result = await axios.post(' http://120.25.125.57:8080/xhywblog/dynamic/setLike', {
+            id: id
+        })
+        return result;
+    } else {
+        let result = await axios.post('http://120.25.125.57:8080/xhywblog/dynamic/cancelLike', {
+            id: id
+        })
+        return result;
+    }
+
+
+}
+//发送评论接口
+async function postComment(text, replyId, dynamicId, userId, floorId) {
+    let result = await axios.post(' http://120.25.125.57:8080/xhywblog/comment/pushComment', {
+        text: text,
+        replyId: replyId,
+        dynamicId: dynamicId,
+        userId: userId,
+        floorId: floorId,
+    })
+    return result;
+}
+//获取评论
+async function getComment(dynamicId, floorId) {
+    let result = await axios.post('http://120.25.125.57:8080/xhywblog/comment/list', {
+        dynamicId: dynamicId,
+        floorId: floorId,
+    })
+    return result;
+}
+//删除评论
+async function delComment(commentId) {
+    let result = await axios.get(' http://120.25.125.57:8080/xhywblog/comment/removeComment', {
+        params: {
+            commentId: commentId,
+        }
+    })
+    return result;
+}
+
+export { delComment, getComment, postComment, GetPublic, getCaptcha, getUserInfo, SignUp, SignIn, GetHotWord, SentBlog, changeProfile, changeUserInfo, DeleteDynamic, editDynamic, isLike }
 

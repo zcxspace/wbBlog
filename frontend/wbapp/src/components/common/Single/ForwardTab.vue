@@ -1,16 +1,16 @@
 <template>
   <div class="forwardBar">
-    <div class="forwardId">被转发者id</div>
-    <div class="forwardText">转发信息</div>
-    <div class="forwardPhotos" v-if="photos">
+    <div class="forwardId">{{ getRootName }}</div>
+    <div class="forwardText">{{ forwardDynamic.text }}文本</div>
+    <div class="forwardPhotos" v-if="hasPhotos">
       <ul>
-        <li v-for="(url, index) of pics" :key="index">
+        <li v-for="(url, index) of picPaths" :key="index">
           <img :src="url" alt="转发的图片" />
         </li>
       </ul>
     </div>
     <div class="forwardTabs">
-      <div class="time">发布时间</div>
+      <div class="time">{{ getCreateTime }}</div>
       <div class="bar">
         <button>转发</button>
         <button>评论</button>
@@ -24,20 +24,33 @@
 export default {
   props: {
     forwardDynamic: Object,
+    forwardTexts: Object,
   },
   data() {
     return {
-      text: this.forwardDynamic.text,
-      pics: this.forwardDynamic.filePath,
+      picPaths: this.forwardDynamic.filePath,
     };
   },
   computed: {
-    forwardInfo() {
-      return JSON.stringify(this.forwardDynamic);
+    hasPhotos() {
+      return this.forwardDynamic.filePath ? true : false;
     },
-    photos() {
-      return JSON.stringify(this.forwardDynamic) != {} ? true : false;
+    getRootName() {
+      return this.forwardTexts.slice().pop().name;
     },
+    getCreateTime() {
+      let time = new Date(this.forwardDynamic.createdTime);
+      let month = time.getMonth() + 1;
+      let day = time.getDate();
+      let dataStr = month + "-" + day;
+      let hour = time.getHours();
+      let min = time.getMinutes();
+      let hourStr = hour < 10 ? "0" + hour : hour;
+      return dataStr + " " + hourStr + ":" + min;
+    },
+  },
+  created() {
+    console.log(this.forwardDynamic);
   },
 };
 </script>
@@ -48,7 +61,11 @@ export default {
   height: auto;
   display: flex;
   align-items: center;
+  color: whitesmoke;
   flex-direction: column;
+  background: rgb(114, 112, 112);
+  padding: 6px;
+  border-radius: 10px;
   /* background: darkgoldenrod; */
 }
 .forwardId {
@@ -56,7 +73,6 @@ export default {
   height: 30px;
   display: flex;
   align-items: center;
-  background: purple;
 }
 .forwardText {
   width: 100%;
@@ -64,20 +80,17 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  background: pink;
 }
 .forwardTabs {
   width: 100%;
   height: 30px;
   display: flex;
-  background: hotpink;
   justify-content: space-between;
   align-items: center;
 }
 .forwardPhotos {
   width: 100%;
   min-height: 135px;
-  background: green;
 }
 .forwardPhotos ul {
   width: 100%;
@@ -88,7 +101,6 @@ export default {
 .forwardPhotos ul li {
   width: 133px;
   height: 133px;
-  background: red;
   border-radius: 5px;
   overflow: hidden;
   margin: 10px;
@@ -125,13 +137,20 @@ export default {
 }
 .bar div {
   flex: 1;
-  background: red;
 }
-.bar div button {
-  width: 40px;
+.bar button {
+  width: 50px;
+  border: 0;
+  outline: none;
+  color: whitesmoke;
+  margin: 0 4px;
+  transition: all ease 0.3s;
+  background: transparent;
+}
+.bar button:hover {
+  background: rgb(161, 154, 154);
 }
 .time {
   width: auto;
-  background: red;
 }
 </style>

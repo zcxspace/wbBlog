@@ -5,14 +5,11 @@
     </div>
     <div class="tabs">
       <ul class="tabBox">
-        <!-- <li v-for="tab of tabsArr" :key="tab.com"> -->
-        <!-- <div class="icon"><i class="inconfont" :class="tab.icon"></i>字体图标</div> -->
         <li v-for="com of ComArr" :key="com.comName">
           <div class="icon">字体</div>
-          <router-link
-            :to="{ name: `${com.comName}`, params: { type: `${com.type}` } }"
-            >{{ com.comName }}</router-link
-          >
+          <router-link :to="{ name: `${com.comName}` }">{{
+            com.comName
+          }}</router-link>
         </li>
       </ul>
     </div>

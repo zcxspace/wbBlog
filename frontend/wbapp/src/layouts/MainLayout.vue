@@ -24,6 +24,7 @@
 
         <!-- 中心核心区 -->
         <div class="nav-center-center">
+          <slot name="userPage"></slot>
           <slot name="center"></slot>
         </div>
 
@@ -63,13 +64,14 @@ body {
   display: flex;
   width: 100vw;
   height: 100vh;
+  overflow: scroll;
+  overflow-x: hidden;
 }
 .Viewer {
   width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: cornflowerblue;
 }
 .topPadding {
   margin-top: 80px;
@@ -101,7 +103,7 @@ body {
 }
 .nav-center {
   width: 80vw;
-  height: 5000px;
+  height: auto;
 }
 .nav-center-content {
   display: flex;
@@ -109,18 +111,23 @@ body {
 }
 .nav-center-left {
   width: 200px;
-  height: 1000px;
-  border: 3px solid black;
+  height: 800px;
 }
 .nav-center-center {
   margin: 0 10px;
   flex: 1;
-  border: 3px solid black;
+  height: 1000px;
+  padding: 0 5px;
 }
 .nav-center-right {
   width: 300px;
-  height: 1000px;
-  border: 3px solid black;
+  height: 800px;
+}
+.nav-center-left,
+.nav-center-right {
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(18, 18, 18, 0.1);
+  border-radius: 8px;
 }
 nav {
   padding: 30px;

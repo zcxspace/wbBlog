@@ -11,71 +11,51 @@
             enctype="multipart/form-data"
           />
         </div>
-
-        <img :src="userInfo.profileUrl" alt="头像" />
+        <img :src="path" alt="头像" />
       </div>
       <div>
         <h2>{{ userInfo.email }}</h2>
       </div>
     </div>
-
+    <!-- 展示信息 -->
     <div class="setInfo">
       <div class="infos" v-if="isShow">
-        <div class="info">
-          <div>姓名:{{ userInfo.name }}{{ $store.state.userInfo.name }}</div>
-        </div>
-        <div class="info">
-          <div>地址:{{ userInfo.address }}</div>
-        </div>
-        <div class="info">
-          <div>电话:{{ userInfo.phone }}</div>
-        </div>
-        <div class="info">
-          <div>职业:{{ userInfo.job }}</div>
-        </div>
-        <div class="info">
-          <div>兴趣:{{ userInfo.interests }}</div>
-        </div>
-        <div class="info">
-          <div>特质:{{ userInfo.trait }}</div>
-        </div>
-        <div class="info">
-          <div>性别:{{ getGender }}</div>
-        </div>
-        <div class="info">
-          <div>生日:{{ getBirth }}</div>
-        </div>
+        <template v-for="(value, name) of getUserInfo" :key="name">
+          <div class="info">
+            <div>{{ name }}:{{ value }}</div>
+          </div>
+        </template>
       </div>
 
       <div class="inputs" v-else>
         <div class="inputBox">
           <p>姓名</p>
-          <input type="text" :value="userInfo.name" ref="name" />
+          <input type="text" v-model="userInfo.name" ref="name" @input="ttt" />
         </div>
 
         <div class="inputBox">
           <p>地址</p>
-          <input type="text" :value="userInfo.address" ref="address" />
+          <input type="text" v-model="userInfo.address" ref="address" />
         </div>
 
         <div class="inputBox">
           <p>电话</p>
-          <input type="text" :value="userInfo.phone" ref="phone" />
+          <input type="text" v-model="userInfo.phone" ref="phone" />
         </div>
 
         <div class="inputBox">
           <p>职业</p>
-          <input type="text" :value="userInfo.job" ref="job" />
+          <input type="text" v-model="userInfo.job" ref="job" />
         </div>
 
         <div class="inputBox">
           <p>兴趣</p>
-          <input type="text" :value="userInfo.interests" ref="interest" />
+          <input type="text" v-model="userInfo.interests" ref="interest" />
         </div>
         <div class="inputBox">
           <p>性别</p>
           <label for="man">
-            <i class="iconfont icon-nan"></i>
+            <i class="iconfont icon-nan">男</i>
           </label>
           <input
             type="radio"
@@ -83,42 +63,50 @@
             class="gender"
             value="1"
             v-model="picked"
-            :checked="this.userInfo.gender == 1"
+            :checked="this.$store.state.userInfo.gender == 1"
             id="man"
             ref="man"
           />
           <label for="woman">
-            <i class="iconfont icon-nv"></i>
+            <i class="iconfont icon-nv">女</i>
           </label>
           <input
             type="radio"
             name="gender"
             class="gender"
             v-model="picked"
-            :checked="this.userInfo.gender == 0"
+            :checked="this.$store.state.userInfo.gender == 0"
             value="0"
             id="woman"
             ref="woman"
           />
 
-          {{ this.userInfo.gender }}
+          {{ this.picked }}
         </div>
         <div class="inputBox">
           <p>特质</p>
-          <input type="text" :value="userInfo.trait" ref="trait" />
+          <input type="text" v-model="userInfo.trait" ref="trait" />
         </div>
         <div class="inputBox">
           <p>生日</p>
+          <input type="date" name="" id="" />
+          <select v-model="selected">
+            <option value="" v-for="n of 100" :key="n">{{ n }}</option>
+          </select>
+          {{ selected }}
           <el-date-picker
-            :value="userInfo.birthday"
+            v-model="userInfo.birthday"
             type="date"
+            editable="false"
             placeholder="Pick a day"
             ref="birthday"
+            @change="get"
           />
         </div>
       </div>
 
       <div class="btn">
+        <button @click="isShow = !isShow" v-show="isShow">编辑信息</button>
         <button
           @click="
             showPanel();
@@ -128,7 +116,7 @@
         >
           取消
         </button>
-        <button @click="changeInfo">修改信息</button>
+        <button @click="changeInfo" v-show="!isShow">修改信息</button>
       </div>
     </div>
   </div>
@@ -139,55 +127,119 @@ import {
   changeProfile,
   changeUserInfo,
 } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
-
+import { mapMutations } from "vuex";
 export default {
   data() {
     return {
       userInfo: null,
+      userBirthday: null,
       isShow: true,
       input: "",
       value1: "",
       fileUrl: "",
       picked: "",
+      selected: 3,
+      userFile: null,
+      //用于回显
+      path: null,
+      // path: this.$store.state.userInfo.photo,
     };
   },
+  name: "ChangeInfo",
+
   methods: {
+    ...mapMutations(["updateUserPrivate", "updateUserAvatar"]),
     async changeInfo() {
       this.isShow = !this.isShow;
+      let gender = this.getChangeGender;
+      let { name, address, intro, phone, job, trait, interests, birthday } =
+        this.userInfo;
       let res = await changeUserInfo(
-        this.$refs.name.value,
-        this.$refs.address.value,
-        this.$refs.intro.value,
-        this.$refs.phone.value,
-        this.$refs.job.value,
-        this.$refs.trait.value,
-        this.$refs.interest.value,
-        this.$refs.gender.value
+        name,
+        address,
+        intro,
+        birthday,
+        phone,
+        job,
+        interests,
+        trait,
+        gender
       );
       console.log(res);
+      this.updateUserPrivate(res.data.data);
+    },
+
+    cancel() {
+      this.userInfo = Object.assign({}, this.$store.state.userInfo);
+    },
+    ttt() {
+      console.log(this.userInfo.name);
+      console.log(this.$store.state.userInfo.name);
+    },
+    get() {
+      console.log(this.userBirthday);
+      console.log(new Date(this.userInfo.birthday));
+      console.log(new Date(this.$store.state.userInfo.birthday));
     },
     showPanel() {
       this.isShow = true;
     },
-
-    getUrl(e) {
+    async getUrl(e) {
       let file = e.target.files[0];
-      let reader = new FileReader();
-      reader.readAsDataURL(file);
-      let that = this;
-      reader.onload = async function () {
-        let result = await changeProfile(reader.result);
-        if (result == "图片上传成功") {
-          that.userInfo.profileUrl = reader.result;
-        } else {
-          console.log("图片上传失败");
-        }
-      };
+
+      let form = new FormData();
+      form.append("file", file);
+      let result = await changeProfile(form);
+      console.log(result);
+      if (result.data.message == "图片上传成功") {
+        let filePath = result.data.data.file.filePath;
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        let aim = this;
+        reader.onload = function () {
+          // aim.updateUserAvatar(this.result);
+          // aim.path = this.result;
+          // console.log(this.result);
+          console.log("我读完了");
+          // aim.updateUserAvatar(this.result);
+          aim.path = this.result;
+          aim.updateUserAvatar(filePath);
+        };
+
+        console.log(this.$store.state.userInfo.photo);
+        // this.path = filePath;
+
+        console.log(result);
+      } else {
+        console.log("图片上传失败");
+      }
+      //   // 获取当前实例
+      //   let that = this;
+      //   reader.onload = async function () {
+
+      //    that.updateUserAvatar(this.result)
+      //     // if (result.data.message == "图片上传成功") {
+      //     //   let filePath = result.data.data.file.filePath;
+      //     //   this.path = this.result;
+
+      //     //   console.log(filePath);
+      //     //   that.updateUserAvatar(filePath);
+
+      //     //   console.log(result);
+      //     // } else {
+      //     //   console.log("图片上传失败");
+      //     // }
+      //     // console.log(result.data.data.filePath);
+      //   };
+      //    let form = new FormData();
+      //     form.append("file", file);
+      //     let result = await changeProfile(form);
+      //     console.log(result);
     },
   },
   computed: {
     getGender() {
-      return this.userInfo.gender == 1 ? "男" : "女";
+      return this.$store.state.userInfo.gender ? "男" : "女";
     },
     getBirth() {
       let time = new Date(this.userInfo.birthday);
@@ -196,13 +248,32 @@ export default {
       let day = time.getDate();
       return `${year}年${month + 1}月${day}日`;
     },
+    getUserInfo() {
+      let { name, address, intro, phone, job, trait, interests } =
+        this.$store.state.userInfo;
+      let obj = {
+        姓名: name,
+        地址: address,
+        简介: intro,
+        电话: phone,
+        工作: job,
+        特质: trait,
+        兴趣: interests,
+        性别: this.getGender,
+        生日: this.getBirth,
+      };
+      return obj;
+    },
+
     //修改性别时 获取性别 若未选中则返回原数据
     getChangeGender() {
       return this.picked == "" ? this.userInfo.gender : this.picked;
     },
   },
   created() {
-    this.userInfo = this.$store.state.userInfo;
+    this.userInfo = Object.assign({}, this.$store.state.userInfo);
+    this.userBirthday = this.userInfo.birthday;
+    this.path = this.$store.state.userInfo.photo;
   },
 };
 </script>

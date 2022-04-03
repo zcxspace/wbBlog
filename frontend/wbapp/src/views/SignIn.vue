@@ -28,7 +28,7 @@
           <img :src="CapSrc" alt="验证码" @click="Captcha" />
         </div>
         <div class="btn">
-          <button @click="test">SignIn</button>
+          <button @click="goToSignIn">SignIn</button>
         </div>
       </div>
     </div>
@@ -37,9 +37,11 @@
 
 <script>
 import {
+  getUserInfo,
   getCaptcha,
   SignIn,
 } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
+import { mapMutations } from "vuex";
 export default {
   data() {
     return {
@@ -50,6 +52,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(["updateUserInfo"]),
     async Captcha() {
       let CapSrc = await getCaptcha();
       this.CapSrc = CapSrc;
@@ -57,19 +60,28 @@ export default {
     async goToSignIn() {
       let result = await SignIn(this.email, this.password, this.captcha);
       console.log(result);
-      if (result.data.data.msg == "登录成功") {
+
+      //登录成功 直接储存数据 并 跳转页面
+
+      if (result.data.data.msg == "登陆成功") {
+        let path = result.data.data.user.profileUrl;
+        console.log(path);
+        //登录成功获得用户信息
+        let UserInfo = await getUserInfo(path);
+        console.log(UserInfo);
+        console.log(UserInfo.data.data);
+        let Info = UserInfo.data.data;
+        this.updateUserInfo(Info);
+        console.log(Info);
+        console.log(this.$store.state.userInfo);
         this.$router.push({
-          name: "userPage",
-          params: { info: JSON.stringify(result) },
+          name: "UserView",
+          params: { path: `${Info}` },
         });
-      }
+      } else console.log(result.data.data.msg);
     },
     goToViewer() {
       this.$router.push("/ViewerPage");
-    },
-
-    test() {
-      this.$router.push("/");
     },
   },
   created() {

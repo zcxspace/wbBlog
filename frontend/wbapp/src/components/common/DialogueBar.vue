@@ -23,10 +23,13 @@ export default {
   emits: ["hideDialog", "yes"],
   methods: {
     cancel() {
+      //点击取消执行
       this.$emit("hideDialog");
     },
     toDel() {
+      // 点击确认执行 并触发
       this.$emit("yes");
+
       this.$emit("hideDialog");
     },
   },

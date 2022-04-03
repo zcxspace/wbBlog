@@ -1,7 +1,11 @@
 <template>
-  <div class="blog">
+  <div class="blog" v-show="userDynamicNum" v-infinite-scroll="load">
     <template v-for="n of NowDisNum" :key="n">
-      <dynamic-tab :dynamicInfo="dynamics[n]"></dynamic-tab>
+      <dynamic-tab
+        :userInfo="userInfo"
+        :dynamicInfo="dynamics[n - 1]"
+        v-if="userDynamicNum"
+      ></dynamic-tab>
     </template>
     <p v-if="Loading" class="Tips">正在加载中</p>
     <p v-if="noMore">没有更多数据了</p>
@@ -15,28 +19,49 @@ export default {
     dynamicTab,
   },
   props: {
-    Loading: Boolean,
-    NowDisNum: Number,
-    noMore: Boolean,
+    dynamics: Array,
+    userInfo: Object,
   },
   data() {
     return {
-      dynamics: this.$store.state.userDynamic,
+      Loading: false,
+      NowDisNum: 1,
     };
   },
-  //   computed: {
-  //     noMore() {
-  //       return this.NowDisNum >= 13;
-  //     },
-  //   },
+  methods: {
+    load() {
+      console.log("触发了load函数");
+      //根据当前动态数量来判断是否加载
+      if (!this.noMore) {
+        this.Loading = true;
+        setTimeout(() => {
+          //如果当前展示数量等于动态数量 则停止任务
+          if (this.NowDisNum == this.dynamics.length) return;
+          this.NowDisNum++;
+          this.Loading = false;
+          console.log(this.NowDisNum);
+        }, 2000);
+      } else console.log("没有动态了");
+    },
+  },
+  computed: {
+    userDynamicNum() {
+      return this.dynamics.length ? true : false;
+    },
+    noMore() {
+      return this.NowDisNum >= this.dynamics.length;
+    },
+  },
   created() {
-    console.log("nihoa");
-    console.log(this.NowDisNum);
-    console.log(this.noMore);
-    console.log(this.Loading);
+    console.log(this.userInfo);
   },
 };
 </script>
 
-<style>
+<style scoped>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 </style>
