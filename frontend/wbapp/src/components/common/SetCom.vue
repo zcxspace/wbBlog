@@ -51,7 +51,7 @@ export default {
         this.comValue,
         this.replyId,
         this.dynamicInfo.id,
-        this.dynamicInfo.userId,
+        this.$store.state.userInfo.id,
         this.floorId
       );
 

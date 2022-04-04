@@ -22,7 +22,7 @@
           @close="closeSet"
         ></set-com>
 
-        <div class="profile"></div>
+        <div class="profile" @click="showInfo"></div>
         <div class="comInfo">
           <!-- 用户文本区 -->
 
@@ -34,9 +34,9 @@
           </div>
 
           <div class="funcBar">
-            <div class="time">时间{{ replyCount }}</div>
+            <div class="time">{{ createdTime }}</div>
             <div class="mulFun">
-              <button @click="delItem">删除</button
+              {{ replyCount }} <button @click="delItem">删除</button
               ><button @click="isShowCom = true">评论</button>
             </div>
           </div>
@@ -47,6 +47,7 @@
               <second-level
                 :dynamicInfo="dynamicInfo"
                 :secondItem="item"
+                @getNew="update"
                 :floorId="commentInfo.id"
               ></second-level>
             </template>
@@ -60,6 +61,7 @@
 </template>
 
 <script>
+import { getCreateTime } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/PublicFun.js";
 import {
   delComment,
   getComment,
@@ -85,6 +87,9 @@ export default {
     };
   },
   methods: {
+    showInfo() {
+      console.log(this.commentInfo);
+    },
     //更新 二级评论数据
     async update() {
       let result = await getComment(this.dynamicInfo.id, this.commentInfo.id);
@@ -125,6 +130,7 @@ export default {
       this.comCount = 2;
     },
   },
+  //监听当前展示数量 实现无线加载
   watch: {
     comCount(newCom) {
       this.secComments = this.allComments.slice(0, newCom);
@@ -133,6 +139,9 @@ export default {
   computed: {
     isShowSecond() {
       return this.replyCount ? true : false;
+    },
+    createdTime() {
+      return getCreateTime(this.commentInfo.createdTime);
     },
   },
 
@@ -187,7 +196,9 @@ export default {
   width: 100%;
   /* min-height: 100px; */
   height: auto;
-  background: brown;
+  background: #f2f6fc;
+  padding: 5px;
+  border-radius: 8px;
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
@@ -208,8 +219,8 @@ export default {
   color: black;
 }
 .profile {
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 70px;
   background: chocolate;
   margin-right: 5px;
 }
@@ -219,20 +230,17 @@ export default {
 
   flex: 1;
   height: 100%;
-  background: cornflowerblue;
+  padding: 5px;
 }
 .content {
   display: flex;
   justify-content: flex-start;
-  min-height: 65px;
+  height: auto;
   align-items: flex-start;
-  background: crimson;
 }
 .text {
   height: auto;
   display: flex;
-
-  background: gold;
 }
 .text p {
   width: 100%;
@@ -244,13 +252,11 @@ export default {
 
 .userName {
   width: auto;
-  background: chartreuse;
   white-space: nowrap;
 }
 
 .funcBar {
   height: auto;
-  background: cyan;
   padding: 5px 0;
   display: flex;
   align-items: center;

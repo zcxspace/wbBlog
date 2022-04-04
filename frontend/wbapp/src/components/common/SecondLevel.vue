@@ -1,11 +1,12 @@
 <template>
-  <div class="comItem">
+  <div class="comItem2">
     <set-com
       :isShowTitle="true"
       :dynamicInfo="dynamicInfo"
       :replyId="this.secondItem.id"
       :floorId="floorId"
       :replyName="secondItem.user.name"
+      @updateCom="update"
       @close="closeSet"
       v-show="isShowSet"
     ></set-com>
@@ -19,12 +20,12 @@
         </div>
         <div class="replyInfo" v-if="hasReplyText">
           <a href="#"> {{ replyText.name }}</a>
-          >{{ replyText.text }}
+          :{{ replyText.text }}
         </div>
       </div>
 
       <div class="funcBar">
-        <div class="time">时间</div>
+        <div class="time">{{ createdTime }}</div>
         <div class="mulFun">
           <button @click="delItem">删除</button
           ><button @click="isShowSet = true">评论</button>
@@ -37,6 +38,7 @@
 </template>
 
 <script>
+import { getCreateTime } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/PublicFun.js";
 import { delComment } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
 import SetCom from "./SetCom.vue";
 export default {
@@ -45,6 +47,7 @@ export default {
     secondItem: Object,
     floorId: Number,
   },
+  emits: ["getNew"],
   components: { SetCom },
   data() {
     return {
@@ -56,8 +59,16 @@ export default {
     hasReplyText() {
       return this.secondItem.replyText ? true : false;
     },
+    createdTime() {
+      return getCreateTime(this.secondItem.createdTime);
+    },
   },
   methods: {
+    update() {
+      console.log("我要开始更新了");
+      this.$emit("getNew");
+      console.log("更新了二级楼的二级评论");
+    },
     closeSet() {
       this.isShowSet = false;
     },
@@ -78,29 +89,22 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
-
-.secondLevel {
-  width: 100%;
-  height: auto;
-  background: ivory;
-  padding-left: 50px;
-  display: flex;
-  justify-content: flex-start;
-}
-.comItem {
+.comItem2 {
   width: 100%;
   /* min-height: 100px; */
+  background: rgba(117, 116, 116, 0.4);
+  border-radius: 10px;
   height: auto;
   padding: 5px;
-  background: whitesmoke;
   display: flex;
+  margin: 3px 0;
   align-items: flex-start;
   justify-content: flex-start;
 }
 .profile {
-  width: 100px;
-  height: 100px;
-  background: chocolate;
+  width: 60px;
+  height: 60px;
+  background: blueviolet;
   margin-right: 5px;
 }
 .comInfo {
@@ -109,26 +113,26 @@ export default {
 
   flex: 1;
   height: 100%;
-  background: cornflowerblue;
 }
 .replyInfo {
   width: 100%;
-  background: khaki;
+  height: auto;
+  padding: 5px;
+  background: rgb(218, 215, 215);
+  border-radius: 5px;
 }
 .content {
   display: flex;
   justify-content: flex-start;
-  min-height: 65px;
+  height: auto;
   flex-direction: column;
   align-items: flex-start;
-  background: crimson;
 }
 .text,
 .replyInfo {
   height: auto;
   display: flex;
   margin: 5px 0;
-  background: gold;
 }
 .text p {
   width: 100%;
@@ -140,13 +144,11 @@ export default {
 
 .userName {
   width: auto;
-  background: chartreuse;
   white-space: nowrap;
 }
 
 .funcBar {
   height: auto;
-  background: cyan;
   padding: 5px 0;
   display: flex;
   align-items: center;

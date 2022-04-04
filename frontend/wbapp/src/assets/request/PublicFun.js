@@ -8,6 +8,6 @@ function getCreateTime(timeStamp) {
     let hourStr = hour < 10 ? "0" + hour : hour;
     let minStr = min < 10 ? '0' + min : min;
     return dataStr + " " + hourStr + ":" + minStr;
-};
+}
 
-export { getCreateTime };
+export { getCreateTime }

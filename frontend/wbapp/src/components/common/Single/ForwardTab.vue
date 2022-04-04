@@ -10,7 +10,7 @@
       </ul>
     </div>
     <div class="forwardTabs">
-      <div class="time">{{ getCreateTime }}</div>
+      <div class="time">{{ createdTime }}</div>
       <div class="bar">
         <button>转发</button>
         <button>评论</button>
@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import { getCreateTime } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/PublicFun.js";
 export default {
   props: {
     forwardDynamic: Object,
@@ -38,15 +39,8 @@ export default {
     getRootName() {
       return this.forwardTexts.slice().pop().name;
     },
-    getCreateTime() {
-      let time = new Date(this.forwardDynamic.createdTime);
-      let month = time.getMonth() + 1;
-      let day = time.getDate();
-      let dataStr = month + "-" + day;
-      let hour = time.getHours();
-      let min = time.getMinutes();
-      let hourStr = hour < 10 ? "0" + hour : hour;
-      return dataStr + " " + hourStr + ":" + min;
+    createdTime() {
+      return getCreateTime(this.forwardDynamic.createdTime);
     },
   },
   created() {

@@ -90,7 +90,6 @@ export default {
   height: auto;
   padding: 10px;
   overflow: auto;
-  background: royalblue;
 }
 .editArea {
   width: 100%;
