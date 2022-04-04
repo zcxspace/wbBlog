@@ -155,5 +155,39 @@ async function delComment(commentId) {
     return result;
 }
 
-export { delComment, getComment, postComment, GetPublic, getCaptcha, getUserInfo, SignUp, SignIn, GetHotWord, SentBlog, changeProfile, changeUserInfo, DeleteDynamic, editDynamic, isLike }
+//关注用户
+async function follow(userId, otherId) {
+    let result = await axios.post('http://120.25.125.57:8080/xhywblog/fans/subscription',
+        {
+            userId: userId,
+            otherId: otherId,
+        });
+    return result;
+}
+//取消关注
+async function unFollow(userId, otherId) {
+    let result = axios.post('http://120.25.125.57:8080/xhywblog/fans/cancelSubscription', {
+
+        userId: userId,
+        otherId: otherId
+
+    })
+    return result;
+}
+//获取粉丝
+async function getFans(userId) {
+    let result = axios.get('http://120.25.125.57:8080/xhywblog/fans/getFans', {
+        params: { userId: userId }
+
+    });
+    return result;
+}
+//获取关注者
+async function getFollower(userId) {
+    let result = axios.get('http://120.25.125.57:8080/xhywblog/fans/getBeSubscript', {
+        params: { userId: userId }
+    });
+    return result;
+}
+export { getFollower, getFans, unFollow, follow, delComment, getComment, postComment, GetPublic, getCaptcha, getUserInfo, SignUp, SignIn, GetHotWord, SentBlog, changeProfile, changeUserInfo, DeleteDynamic, editDynamic, isLike }
 

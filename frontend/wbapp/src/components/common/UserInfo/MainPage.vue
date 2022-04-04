@@ -8,7 +8,7 @@
 
     <div class="infoBar">
       <div class="userFile">
-        <img src="#" alt="用户头像" />
+        <img :src="profilePath" alt="用户头像" />
       </div>
 
       <div class="userInfo">
@@ -17,12 +17,12 @@
             <h2>{{ userInfo.name }}</h2>
           </div>
           <div class="followInfo">
-            <div>
+            <div class="fans" @click="goToFan(1)">
               <span>粉丝</span>
               <h4>{{ userInfo.followMe }}</h4>
             </div>
 
-            <div>
+            <div class="follow" @click="goToFan(2)">
               <span>关注</span>
               <h4>{{ userInfo.following }}</h4>
             </div>
@@ -79,12 +79,12 @@ export default {
   props: {
     path: String,
   },
-  name: "MuserInfo",
+  name: "RandomInfo",
 
   data() {
     return {
-      userInfo: null,
-      dynamics: null,
+      userInfo: {},
+      dynamics: {},
       uid: this.path,
       follow: false,
       isShrink: true,
@@ -97,6 +97,7 @@ export default {
         { title: "相册", com: "album" },
       ],
       height: null,
+      profilePath: this.$store.state.userInfo.photo,
     };
   },
   components: {
@@ -109,26 +110,31 @@ export default {
     changeStatus() {
       this.follow = !this.follow;
     },
-    watch: {
-      uid(newUid, oldUid) {
-        console.log(newUid);
-        console.log(oldUid);
-      },
+    goToFan(flag) {
+      if (flag == 1) {
+        this.$router.push({ name: "FansFollow", params: { type: "fan" } });
+      } else
+        this.$router.push({ name: "FansFollow", params: { type: "follower" } });
     },
   },
 
   async created() {
+    console.log(this.path);
     //如果为随机用户跳转则获取地址
     if (this.path) {
       let path = "http://120.25.125.57:8080/xhywblog/users/" + this.path;
       let result = await getUserInfo(path);
+      console.log(result);
       this.userInfo = result.data.data.user;
       this.dynamics = result.data.data.dynamic;
+      console.log(this.userInfo);
+      console.log(this.dynamics);
     } else {
       this.userInfo = this.$store.state.userInfo;
       this.dynamics = this.$store.state.userDynamic;
     }
     // console.log(this.path);
+    console.log("用户页生成了");
   },
 };
 </script>
@@ -222,7 +228,7 @@ export default {
   overflow: hidden;
   background: whitesmoke;
   border-radius: 50%;
-  padding: 10px;
+  /* padding: 10px; */
 }
 .userFile img {
   background: yellowgreen;
@@ -260,5 +266,10 @@ export default {
 }
 .followInfo h4 {
   display: inline-block;
+}
+.fans:hover,
+.follow:hover {
+  color: goldenrod;
+  cursor: pointer;
 }
 </style>

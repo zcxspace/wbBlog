@@ -22,7 +22,9 @@
           @close="closeSet"
         ></set-com>
 
-        <div class="profile" @click="showInfo"></div>
+        <div class="profile" @click="showInfo">
+          <img :src="profile" alt="用户头像" />
+        </div>
         <div class="comInfo">
           <!-- 用户文本区 -->
 
@@ -84,6 +86,7 @@ export default {
       allComments: null,
       comCount: 2,
       showBack: false,
+      profile: this.commentInfo.user.photo,
     };
   },
   methods: {
@@ -221,8 +224,14 @@ export default {
 .profile {
   width: 70px;
   height: 70px;
-  background: chocolate;
+  overflow: hidden;
+  border-radius: 50%;
+
   margin-right: 5px;
+}
+.profile img {
+  width: 100%;
+  height: 100%;
 }
 .comInfo {
   display: flex;

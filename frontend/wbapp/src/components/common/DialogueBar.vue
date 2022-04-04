@@ -4,7 +4,7 @@
       <div class="title">
         <h2><slot name="title">确认取消吗？</slot></h2>
       </div>
-      <div class="content"><slot name="content">内容</slot></div>
+      <div class="content"><slot name="content"></slot></div>
       <div class="btn">
         <button class="cancel" @click="cancel">取消</button>
         <button class="yes" @click="toDel">确认</button>

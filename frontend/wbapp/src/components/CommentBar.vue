@@ -1,7 +1,9 @@
 <template>
   <div class="Comment">
     <div class="editArea">
-      <div class="avatar">头像</div>
+      <div class="avatar">
+        <img :src="profile" alt="" />
+      </div>
       <set-com
         :isShowTitle="false"
         :replyId="0"
@@ -37,6 +39,7 @@ export default {
       showFirst: true,
       commentInfo: null,
       commentsNum: null,
+      profile: this.$store.state.userInfo.photo,
     };
   },
   methods: {
@@ -96,7 +99,6 @@ export default {
   height: auto;
   display: flex;
   justify-content: flex-start;
-  background: sandybrown;
   margin-bottom: 10px;
 }
 .editArea .setCom {
@@ -105,7 +107,12 @@ export default {
 .avatar {
   width: 65px;
   height: 65px;
-  background: seagreen;
+  overflow: hidden;
   border-radius: 50%;
+  margin: 5px;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
 }
 </style>

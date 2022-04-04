@@ -38,7 +38,7 @@
 
     <!-- 头部用户信息区 -->
     <div class="userInfo">
-      <img src="" alt="" @click="test1" />
+      <img :src="profile" alt="用户头像" @click="test1" />
       <h2>{{ getName }}</h2>
     </div>
     <!-- 头部信息区结束 -->
@@ -58,9 +58,9 @@
               v-for="(item, index) of this.dynamicInfo.forwardTexts"
               :key="index"
             >
-              //<router-link
+              <router-link
                 :to="{
-                  name: 'userInfo',
+                  name: 'RandomInfo',
                   params: { path: `${item.profileUrl.match(/u\d+/)[0]}` },
                 }"
                 >@{{ item.name }}</router-link
@@ -170,6 +170,7 @@ export default {
       isCommentShow: false,
       //切换点赞效果
       isLike: false,
+      //头像地址
     };
   },
   computed: {
@@ -202,15 +203,18 @@ export default {
         return true;
       }
     },
+    profile() {
+      return this.dynamicInfo.user
+        ? this.dynamicInfo.user.photo
+        : this.$store.state.userInfo.photo;
+    },
   },
   methods: {
     openAllCom() {
       // this.$refs.comment.sayHi();
       this.openAll = !this.openAll;
     },
-    test02() {
-      console.log("test02");
-    },
+
     ...mapMutations(["updateHomePageDynamic"]),
     //删除动态接口
     async deleteDynamic() {
@@ -305,7 +309,6 @@ li {
   height: 100%;
   width: 80px;
   margin-right: 10px;
-  background: royalblue;
   border-radius: 50%;
 }
 .tabs {

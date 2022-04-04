@@ -42,31 +42,54 @@ const routes = [
         redirect: '/User/UserHome/HomePage1/HomePage',
         component: () => import('../pages/UserHome.vue'),
         //一级子页面
-        children: [{
-          path: 'HomePage1',
-          name: 'HomePage1',
-          component: () => import('../pages/HomePages/HomePage1.vue'),
-          props: true,
-          //二级子页面
-          children: [{
-            path: 'HomePage',
-            name: 'HomePage',
-            component: () => import('../pages/HomePages/HomePage'),
-          }]
-        },
-        //一级子页面
-        {
-          name: 'userInfo',
-          path: 'User/:path',
-          component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/components/common/UserInfo/MainPage.vue'),
-          props: true,
-        },
-        {
-          name: 'comInfo',
-          path: 'comInfo/:info',
-          component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/ComentInfo.vue'),
+        children: [
+          {
+            path: 'HomePage1',
+            name: 'HomePage1',
+            component: () => import('../pages/HomePages/HomePage1.vue'),
+            props: true,
+            //二级子页面
+            children: [{
+              path: 'HomePage',
+              name: 'HomePage',
+              component: () => import('../pages/HomePages/HomePage'),
+            }]
+          },
+          //一级子页面
+          {
+            path: 'UserInfo',
+            name: 'userInfo',
+            component: () => import('../pages/UserPages/UserInfo.vue'),
+            children: [
+              //主用户信息页
+              {
+                name: 'RandomInfo',
+                path: 'RandomInfo/:path',
+                component: () => import('../components/common/UserInfo/MainPage.vue'),
+                props: true,
+              },
+              {
+                name: 'FansFollow',
+                path: 'FansFollow/:type',
+                component: () => import('../components/common/UserInfo/FansFollow.vue'),
+                props: true,
+              },
+              // 用户粉丝页
+            ]
+          },
 
-        }
+          // {
+          //   name: 'userInfo',
+          //   path: 'User/:path',
+          //   component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/components/common/UserInfo/MainPage.vue'),
+          //   props: true,
+          // },
+          {
+            name: 'comInfo',
+            path: 'comInfo/:info',
+            component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/ComentInfo.vue'),
+
+          }
         ]
       },
       {

@@ -4,12 +4,15 @@
       <div class="photoFile">
         <div class="mask">
           点击更换头像
-          <input
+          <!-- <input
             type="file"
             @change="getUrl"
             accept="image/*"
             enctype="multipart/form-data"
-          />
+          /> -->
+          <div>
+            <ImgCutter @cutDown="getUrl" :imgMove="false"></ImgCutter>
+          </div>
         </div>
         <img :src="path" alt="头像" />
       </div>
@@ -123,6 +126,8 @@
 </template>
 
 <script>
+import ImgCutter from "vue-img-cutter";
+
 import {
   changeProfile,
   changeUserInfo,
@@ -146,8 +151,12 @@ export default {
     };
   },
   name: "ChangeInfo",
-
+  components: { ImgCutter },
   methods: {
+    cutDown(result) {
+      console.log(result);
+      this.path = result.dataURL;
+    },
     ...mapMutations(["updateUserPrivate", "updateUserAvatar"]),
     async changeInfo() {
       this.isShow = !this.isShow;
@@ -185,31 +194,14 @@ export default {
       this.isShow = true;
     },
     async getUrl(e) {
-      let file = e.target.files[0];
-
+      let file = e.file;
       let form = new FormData();
       form.append("file", file);
       let result = await changeProfile(form);
       console.log(result);
       if (result.data.message == "图片上传成功") {
         let filePath = result.data.data.file.filePath;
-        let reader = new FileReader();
-        reader.readAsDataURL(file);
-        let aim = this;
-        reader.onload = function () {
-          // aim.updateUserAvatar(this.result);
-          // aim.path = this.result;
-          // console.log(this.result);
-          console.log("我读完了");
-          // aim.updateUserAvatar(this.result);
-          aim.path = this.result;
-          aim.updateUserAvatar(filePath);
-        };
-
-        console.log(this.$store.state.userInfo.photo);
-        // this.path = filePath;
-
-        console.log(result);
+        this.updateUserAvatar(filePath);
       } else {
         console.log("图片上传失败");
       }

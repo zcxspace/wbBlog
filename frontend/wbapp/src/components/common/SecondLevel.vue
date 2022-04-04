@@ -10,7 +10,9 @@
       @close="closeSet"
       v-show="isShowSet"
     ></set-com>
-    <div class="profile"></div>
+    <div class="profile" @click="showInfo">
+      <img :src="profile" alt="用户头像" />
+    </div>
     <div class="comInfo">
       <!-- 用户文本区 -->
       <div class="content">
@@ -53,6 +55,7 @@ export default {
     return {
       isShowSet: false,
       replyText: this.secondItem.replyText,
+      profile: this.secondItem.user.photo,
     };
   },
   computed: {
@@ -64,6 +67,9 @@ export default {
     },
   },
   methods: {
+    showInfo() {
+      console.log(this.secondItem);
+    },
     update() {
       console.log("我要开始更新了");
       this.$emit("getNew");
@@ -104,8 +110,13 @@ export default {
 .profile {
   width: 60px;
   height: 60px;
-  background: blueviolet;
+  overflow: hidden;
+  border-radius: 50%;
   margin-right: 5px;
+}
+.profile img {
+  width: 100%;
+  height: 100%;
 }
 .comInfo {
   display: flex;
