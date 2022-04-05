@@ -4,6 +4,7 @@
       <template #title>确认取消关注吗?</template>
     </dialogue-bar>
     <div class="profile">
+      <div class="mask"></div>
       <img :src="this.Info.photo" alt="用户头像" />
     </div>
     <div class="info">
@@ -11,9 +12,6 @@
         <div class="name">{{ this.Info.name }}</div>
         <div class="intro">{{ this.Info.intro }}</div>
         <div class="fansNum">{{ this.Info.fansCount }}</div>
-        <!-- <div class="name">名字</div>
-        <div class="intro">介绍</div>
-        <div class="fansNum">粉丝数</div> -->
       </div>
       <div class="followBar">
         <button @click="toFollow" v-if="isUnFollow" class="unFollow">
@@ -76,16 +74,35 @@ export default {
   justify-content: flex-start;
   padding: 10px 15px;
   background: #fff;
-  box-shadow: 0 1px 3px rgba(18, 18, 18, 0.1);
+  box-shadow: 0 1px 3px rgba(20, 20, 20, 0.1);
   border-radius: 10px;
   margin: 10px 0;
+  transition: all ease 0.4s;
+}
+.fans:hover {
+  background: rgba(20, 20, 20, 0.1);
 }
 .profile {
   width: 100px;
   height: 100px;
   margin-right: 10px;
   overflow: hidden;
+  position: relative;
   border-radius: 50%;
+  transition: all ease 0.3s;
+}
+.mask {
+  position: absolute;
+  opacity: 0;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transition: all ease 0.3s;
+  background: rgba(20, 20, 20, 0.1);
+}
+.profile:hover .mask {
+  opacity: 1;
 }
 .profile img {
   width: 100%;
@@ -113,8 +130,8 @@ export default {
   border-radius: 30px;
   background: transparent;
   outline: none;
-  color: orange;
-  border: 2px solid orange;
+  color: royalblue;
+  border: 2px solid royalblue;
 }
 .hasFollow {
   width: 100px;

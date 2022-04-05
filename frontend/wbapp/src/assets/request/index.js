@@ -176,16 +176,16 @@ async function unFollow(userId, otherId) {
 }
 //获取粉丝
 async function getFans(userId) {
-    let result = axios.get('http://120.25.125.57:8080/xhywblog/fans/getFans', {
-        params: { userId: userId }
+    let result = axios.post('http://120.25.125.57:8080/xhywblog/fans/getFans', {
+        userId: userId
 
     });
     return result;
 }
 //获取关注者
 async function getFollower(userId) {
-    let result = axios.get('http://120.25.125.57:8080/xhywblog/fans/getBeSubscript', {
-        params: { userId: userId }
+    let result = axios.post('http://120.25.125.57:8080/xhywblog/fans/getBeSubscript', {
+        userId: userId
     });
     return result;
 }

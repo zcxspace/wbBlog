@@ -70,7 +70,7 @@ const routes = [
               },
               {
                 name: 'FansFollow',
-                path: 'FansFollow/:type',
+                path: 'FansFollow/:carryInfo',
                 component: () => import('../components/common/UserInfo/FansFollow.vue'),
                 props: true,
               },

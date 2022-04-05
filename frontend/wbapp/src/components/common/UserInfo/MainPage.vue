@@ -112,9 +112,19 @@ export default {
     },
     goToFan(flag) {
       if (flag == 1) {
-        this.$router.push({ name: "FansFollow", params: { type: "fan" } });
+        this.$router.push({
+          name: "FansFollow",
+          params: {
+            carryInfo: JSON.stringify({ type: "fan", path: this.path }),
+          },
+        });
       } else
-        this.$router.push({ name: "FansFollow", params: { type: "follower" } });
+        this.$router.push({
+          name: "FansFollow",
+          params: {
+            carryInfo: JSON.stringify({ type: "follower", path: this.path }),
+          },
+        });
     },
   },
 

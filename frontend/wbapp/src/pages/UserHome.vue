@@ -1,7 +1,7 @@
 <template>
   <div>
     <main-layout>
-      <template #userPage> 用户页 </template>
+      <template #userPage> </template>
       <template #center>
         <!-- 防止组件复用而不刷新 -->
         <router-view :key="$route.fullPath"></router-view>
