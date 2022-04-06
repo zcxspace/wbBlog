@@ -58,6 +58,12 @@ export default {
       console.log("test");
     },
   },
+  created() {
+    if (this.Info.isSubscript) {
+      this.isUnFollow = false;
+    }
+    console.log(this.Info.isSubscript);
+  },
 };
 </script>
 

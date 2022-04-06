@@ -18,7 +18,7 @@
       <!-- 输入文字区 -->
       <div class="text">
         <el-input
-          v-model="textarea"
+          v-model.trim="textarea"
           :autosize="{ minRows: this.textareaHeight, maxRows: 7 }"
           type="textarea"
           resize="none"
@@ -46,17 +46,32 @@
       </div>
 
       <div class="bottom">
-        <div class="addBtn" v-if="displayUrls.length < 3">
-          <i class="iconfont">add</i>
-          <input type="file" @change="getUrl" multiple="multiple" />
+        <!-- 提示并确认添加话题 -->
+        <div class="topicTip" v-if="isShowTopic">
+          <div class="top">添加什么话题呢？</div>
+          <div class="topics" v-if="topicText != ''">
+            <p @click="setTopic">{{ topicText }}</p>
+          </div>
         </div>
-        <div v-else>最多添加九张图片哦～</div>
+        <div class="bottomBar">
+          <div class="funcBar" v-if="displayUrls.length < 3">
+            <!-- 添加图片 -->
+            <div class="addBtn">
+              <i class="iconfont">add</i>
+              <input type="file" @change="getUrl" multiple="multiple" />
+            </div>
+            <!-- 添加话题 -->
+            <div class="topic"><button @click="addTopic">话题</button></div>
+            <!-- 发送动态 -->
+          </div>
+          <div class="post">
+            <button class="postBtn" @click="postNew">
+              <slot name="btnName">发送</slot>
+            </button>
+          </div>
+        </div>
 
-        <div>
-          <button class="postBtn" @click="postNew">
-            <slot name="btnName">发送</slot>
-          </button>
-        </div>
+        <!-- <div v-else>最多添加九张图片哦～</div> -->
       </div>
     </div>
   </div>
@@ -92,7 +107,41 @@ export default {
     };
   },
   components: { DialogueBox },
+  computed: {
+    markIndex() {
+      //如果当前文本包含# 则返回#后的信息 如果添加新的#则匹配新的值
+      if (this.textarea.includes("#")) {
+        return this.textarea.lastIndexOf("#");
+      }
+      return -1;
+    },
+    isShowTopic() {
+      //如果当前文本没有# 则隐藏话题
+      if (!this.textarea.includes("#")) return false;
+      //判断当前是否显示话题 从当前文本最后的#开始切割 如果中间包含space 则不显示话题
+      return !this.textarea
+        .slice(this.textarea.lastIndexOf("#") + 1)
+        .includes(" ")
+        ? true
+        : false;
+    },
+    topicText() {
+      return this.textarea.slice(this.textarea.lastIndexOf("#") + 1);
+    },
+  },
   methods: {
+    setTopic() {
+      this.textarea =
+        this.textarea.slice(0, this.markIndex) +
+        "#" +
+        this.topicText +
+        "#" +
+        " ";
+    },
+
+    addTopic() {
+      this.textarea = this.textarea + "#";
+    },
     //获取添加图片url
     getUrl(e) {
       console.log("我执行了");
@@ -216,7 +265,49 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
-
+.topicTip {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.topicTip div {
+  margin: 5px 0;
+}
+.topicTip .top {
+  width: auto;
+  height: auto;
+  border: 2px solid gray;
+  padding: 5px;
+  border-radius: 10px;
+}
+.topicTip .topics {
+  width: 100%;
+  height: auto;
+}
+.topicTip .topics p {
+  white-space: break-spaces;
+  width: 100%;
+  background: rgb(181, 184, 177);
+  padding: 5px;
+  border-radius: 10px;
+}
+.topicTip .topics p:hover {
+  background: rgb(142, 143, 140);
+}
+.bottomBar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.funcBar {
+  display: flex;
+  justify-content: flex-start;
+}
+.funcBar div {
+  margin: 0 10px;
+}
 .back {
   position: fixed;
   left: 0;
@@ -260,10 +351,12 @@ export default {
 }
 .bottom {
   width: 100%;
-  height: 50px;
+  height: auto;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: space-between;
 }
 .addBtn {
   position: relative;
@@ -271,6 +364,10 @@ export default {
   width: 80px;
   height: 40px;
 }
+.addBtn input {
+  width: 100%;
+}
+
 .addBtn i {
   pointer-events: none;
 }

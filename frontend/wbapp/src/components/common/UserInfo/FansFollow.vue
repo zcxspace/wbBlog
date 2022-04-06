@@ -38,8 +38,10 @@ export default {
       fans: [],
       followers: [],
       carryInfo: {},
+      userId: null,
     };
   },
+
   methods: {
     goBack() {
       this.$router.push({
@@ -67,7 +69,7 @@ export default {
       });
     },
     async getFan() {
-      let result = await getFans(this.$store.state.userInfo.id);
+      let result = await getFans(this.userId, this.$store.state.userInfo.id);
       console.log(result);
       if (result.data.message.includes("成功")) {
         this.fans = result.data.data;
@@ -76,7 +78,10 @@ export default {
       console.log("fans");
     },
     async getFollow() {
-      let result = await getFollower(this.$store.state.userInfo.id);
+      let result = await getFollower(
+        this.userId,
+        this.$store.state.userInfo.id
+      );
       console.log(result);
       if (result.data.message.includes("成功")) {
         this.followers = result.data.data;
@@ -87,12 +92,16 @@ export default {
   },
   async created() {
     this.carryInfo = JSON.parse(this.$route.params.carryInfo);
+    this.userId = this.carryInfo.path.slice(1);
+    console.log(this.userId);
     if (this.carryInfo.type == "fan") {
       this.getFan();
     }
     if (this.carryInfo.type == "follower") {
       this.getFollow();
     }
+
+    // console.log(this.carryInfo);
   },
 };
 </script>

@@ -48,23 +48,46 @@
       <div class="text">
         <div class="forwardT">
           <!-- 如果是不是转发 则显示正常文本 -->
+          <!-- 无转发文本区 -->
           <div class="normal" v-if="isShowText">
-            {{ this.dynamicInfo.text }}
+            <template v-for="(item, index) of getStr(this.text)" :key="index">
+              <a v-if="item.match(/#[^#]+#/gi)" href="#">
+                {{ item }}
+              </a>
+              <span v-else>{{ item }}</span>
+            </template>
           </div>
+
           <!-- 如果是 则遍历转发数据 -->
           <div class="forwardText" v-else>
-            {{ this.dynamicInfo.text }}
+            <template
+              v-for="(item, index) of getStr(this.dynamicInfo.text)"
+              :key="index"
+            >
+              <a v-if="item.match(/#[^#]+#/gi)" href="#">
+                {{ item }}
+              </a>
+              <span v-else>{{ item }}</span>
+            </template>
             <template
               v-for="(item, index) of this.dynamicInfo.forwardTexts"
               :key="index"
             >
+              循环处理
               <router-link
                 :to="{
                   name: 'RandomInfo',
                   params: { path: `${item.profileUrl.match(/u\d+/)[0]}` },
                 }"
                 >@{{ item.name }}</router-link
-              >:{{ item.text }}
+              >:
+              <!-- 处理转发话题 -->
+              <template v-for="(item, index) of getStr(item.text)" :key="index">
+                <a v-if="item.match(/#[^#]+#/gi)" href="#">
+                  {{ item }}
+                </a>
+                <span v-else>{{ item }}</span>
+              </template>
             </template>
           </div>
         </div>
@@ -142,6 +165,7 @@ import {
   GetPublic,
 } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
 import CommentBar from "../../CommentBar.vue";
+import { splitStr } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/PublicFun.js";
 export default {
   components: { SetBar, DialogueBar, ForwardTab, CommentBar },
 
@@ -170,7 +194,7 @@ export default {
       isCommentShow: false,
       //切换点赞效果
       isLike: false,
-      //头像地址
+      text: "",
     };
   },
   computed: {
@@ -181,6 +205,7 @@ export default {
         ? this.dynamicInfo.user.name
         : this.userInfo.name;
     },
+
     //没有user则显示 功下拉框
     checkUser() {
       return this.dynamicInfo.userId == this.$store.state.userInfo.id
@@ -210,8 +235,12 @@ export default {
     },
   },
   methods: {
+    getStr(str) {
+      console.log(str);
+      console.log(splitStr(str));
+      return splitStr(str);
+    },
     openAllCom() {
-      // this.$refs.comment.sayHi();
       this.openAll = !this.openAll;
     },
 
@@ -261,6 +290,7 @@ export default {
     },
   },
   created() {
+    this.text = this.dynamicInfo.text;
     console.log(this.dynamicInfo.userId);
     console.log(this.hasPhotos);
     console.log(this.userInfo);

@@ -51,6 +51,11 @@ async function changeProfile(form) {
     )
     return result;
 }
+//更换背景
+async function changeBack(form) {
+    let result = await axios.post('http://120.25.125.57:8080/xhywblog/users/bagImage', form, config)
+    return result;
+}
 
 //更改用户信息 
 async function changeUserInfo(name, address, intro, birthday, phone, job, trait, interests, gender) {
@@ -175,19 +180,20 @@ async function unFollow(userId, otherId) {
     return result;
 }
 //获取粉丝
-async function getFans(userId) {
+async function getFans(userId, lookId) {
     let result = axios.post('http://120.25.125.57:8080/xhywblog/fans/getFans', {
-        userId: userId
-
+        userId: userId,
+        lookId: lookId
     });
     return result;
 }
 //获取关注者
-async function getFollower(userId) {
+async function getFollower(userId, lookId) {
     let result = axios.post('http://120.25.125.57:8080/xhywblog/fans/getBeSubscript', {
-        userId: userId
+        userId: userId,
+        lookId: lookId,
     });
     return result;
 }
-export { getFollower, getFans, unFollow, follow, delComment, getComment, postComment, GetPublic, getCaptcha, getUserInfo, SignUp, SignIn, GetHotWord, SentBlog, changeProfile, changeUserInfo, DeleteDynamic, editDynamic, isLike }
+export { changeBack, getFollower, getFans, unFollow, follow, delComment, getComment, postComment, GetPublic, getCaptcha, getUserInfo, SignUp, SignIn, GetHotWord, SentBlog, changeProfile, changeUserInfo, DeleteDynamic, editDynamic, isLike }
 

@@ -1,7 +1,17 @@
 <template>
   <div class="forwardBar">
     <div class="forwardId">{{ getRootName }}</div>
-    <div class="forwardText">{{ forwardDynamic.text }}文本</div>
+    <div class="forwardText">
+      <template
+        v-for="(item, index) of getStr(forwardDynamic.text)"
+        :key="index"
+      >
+        <a v-if="item.match(/#[^#]+#/gi)" href="#">
+          {{ item }}
+        </a>
+        <span v-else>{{ item }}</span>
+      </template>
+    </div>
     <div class="forwardPhotos" v-if="hasPhotos">
       <ul>
         <li v-for="(url, index) of picPaths" :key="index">
@@ -21,7 +31,10 @@
 </template>
 
 <script>
-import { getCreateTime } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/PublicFun.js";
+import {
+  getCreateTime,
+  splitStr,
+} from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/PublicFun.js";
 export default {
   props: {
     forwardDynamic: Object,
@@ -31,6 +44,11 @@ export default {
     return {
       picPaths: this.forwardDynamic.filePath,
     };
+  },
+  methods: {
+    getStr(str) {
+      return splitStr(str);
+    },
   },
   computed: {
     hasPhotos() {

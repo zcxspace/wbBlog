@@ -1,11 +1,23 @@
 <template>
   <div class="myPage">
+    <dialogue-bar v-if="isShowDialogue" @yes="cancelF" @hideDialog="changeDia">
+      <template #title>确认取消关注么?</template>
+    </dialogue-bar>
     <el-affix :offset="80">
       <div class="top">
         <div class="goBackTab"><button @click="goBack">返回</button></div>
       </div>
     </el-affix>
-
+    <div class="background">
+      <img src="#" alt="背景图片" />
+      <div class="editBtn">
+        <ImgCutter @cutDown="changB" :imgMove="false">
+          <template #open
+            ><button class="editBack">编辑背景图片</button></template
+          >
+        </ImgCutter>
+      </div>
+    </div>
     <div class="infoBar">
       <div class="userFile">
         <img :src="profilePath" alt="用户头像" />
@@ -29,13 +41,11 @@
           </div>
         </div>
 
-        <div class="follow">
+        <div class="follow" v-if="isNotUser">
           <slot name="followBar"
-            ><button @click="changeStatus">
-              <p v-if="follow">已关注</p>
-              <p v-else>未关注</p>
-            </button></slot
-          >
+            ><button @click="toFollow" v-if="isUnFollow">关注</button>
+            <button v-else @click="changeDia">已关注</button>
+          </slot>
         </div>
       </div>
 
@@ -74,7 +84,15 @@
 
 <script>
 import blog from "../UserInfo/MainPages/blogPage.vue";
-import { getUserInfo } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
+import ImgCutter from "vue-img-cutter";
+
+import {
+  getUserInfo,
+  changeBack,
+  follow,
+  unFollow,
+} from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
+import DialogueBar from "../DialogueBar.vue";
 export default {
   props: {
     path: String,
@@ -86,7 +104,8 @@ export default {
       userInfo: {},
       dynamics: {},
       uid: this.path,
-      follow: false,
+      isNotUser: true,
+      isUnFollow: true,
       isShrink: true,
       currentTab: "blog",
       infoStyle: "info-style",
@@ -98,17 +117,47 @@ export default {
       ],
       height: null,
       profilePath: this.$store.state.userInfo.photo,
+      isShowDialogue: false,
     };
   },
   components: {
     blog,
+    ImgCutter,
+    DialogueBar,
   },
+
   methods: {
+    //关注用户
+    async toFollow() {
+      let result = await follow(
+        this.$store.state.userInfo.id,
+        Number(this.uid.slice(1))
+      );
+      if (result.data.message.includes("成功")) {
+        this.isUnFollow = false;
+      }
+      console.log(result);
+    },
+    //取消关注
+    async cancelF() {
+      let result = await unFollow(
+        this.$store.state.userInfo.id,
+        Number(this.uid.slice(1))
+      );
+      if (result.data.message.includes("成功")) {
+        this.isUnFollow = true;
+      }
+      console.log(result);
+    },
+    //更换背景
+    async changB(e) {
+      let form = new FormData();
+      form.append("file", e.file);
+      let result = await changeBack(form);
+      console.log(result);
+    },
     goBack() {
       this.$router.go(-1);
-    },
-    changeStatus() {
-      this.follow = !this.follow;
     },
     goToFan(flag) {
       if (flag == 1) {
@@ -126,10 +175,16 @@ export default {
           },
         });
     },
+    changeDia() {
+      this.isShowDialogue = !this.isShowDialogue;
+    },
   },
 
   async created() {
     console.log(this.path);
+    if (this.path.slice(1) == this.$store.state.userInfo.id) {
+      this.isNotUser = false;
+    }
     //如果为随机用户跳转则获取地址
     if (this.path) {
       let path = "http://120.25.125.57:8080/xhywblog/users/" + this.path;
@@ -143,6 +198,7 @@ export default {
       this.userInfo = this.$store.state.userInfo;
       this.dynamics = this.$store.state.userDynamic;
     }
+
     // console.log(this.path);
     console.log("用户页生成了");
   },
@@ -154,6 +210,39 @@ export default {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+.editBack {
+  width: auto;
+  height: auto;
+  display: none;
+  color: royalblue;
+  background: transparent;
+  border-radius: 10px;
+  outline: none;
+  padding: 10px;
+  border: 3px solid royalblue;
+  transition: all ease 0.4s;
+}
+.editBack:hover {
+  background: royalblue;
+  color: white;
+}
+.background {
+  width: 100%;
+  height: 250px;
+  position: relative;
+}
+.background:hover .editBack {
+  display: block;
+}
+.background .editBtn {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+}
+.background img {
+  width: 100%;
+  height: 100%;
 }
 .info-style {
   background: red;
@@ -196,7 +285,7 @@ export default {
 
 .myPage {
   width: 100%;
-  min-height: 500px;
+  height: auto;
   background: burlywood;
   display: flex;
   flex-direction: column;
