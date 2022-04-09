@@ -14,29 +14,38 @@
 
     <top-nav-bar>
       <template #center1>
-        <router-link to="/User/UserHome">微博主页</router-link>
+        <router-link to="/User/UserHome"
+          ><i class="iconfont icon-home1" style="font-size: 45px"></i
+        ></router-link>
       </template>
 
-      <template #center2></template>
+      <template #center2>
+        <i class="iconfont icon-shipinbofang" style="font-size: 40px"></i
+      ></template>
 
       <template #center3>
-        <router-link to="/User/UserHot">热门</router-link>
+        <router-link to="/User/UserHot"
+          ><i class="iconfont icon-resou"></i
+        ></router-link>
       </template>
 
-      <template #center4></template>
+      <template #center4><i class="iconfont icon-youxiang"></i></template>
 
       <template #center5
-        ><router-link to="/User/UserPage">用户页</router-link></template
-      >
+        ><button @click="jumpPage('MuserInfo')" class="userBtn">
+          <img :src="this.$store.state.userInfo.photo" alt="" /></button
+      ></template>
 
-      <template #right1></template>
-      <template #right2> </template>
+      <template #right1><i class="iconfont icon-shezhi"></i></template>
+      <template #right2> <i class="iconfont icon-taiyang"></i></template>
       <template #right3
-        ><button @click="isShow = !isShow">编辑</button>
+        ><button @click="isShow = !isShow">
+          <i class="iconfont icon-bianji"></i>
+        </button>
       </template>
     </top-nav-bar>
 
-    <router-view></router-view>
+    <router-view :key="$route.fullPath"></router-view>
   </div>
 </template>
 
@@ -50,6 +59,14 @@ export default {
       isShow: false,
       inputName: "inputFile2",
     };
+  },
+  methods: {
+    jumpPage(name) {
+      this.$router.push({
+        name: name,
+        params: { path: `u${this.$store.state.userInfo.id}` },
+      });
+    },
   },
   async created() {
     //在页面加载时读取sessionStorage里的状态信息
@@ -72,4 +89,27 @@ export default {
 </script>
 
 <style scoped>
+i {
+  font-size: 35px;
+}
+a {
+  text-decoration: none;
+  color: black;
+}
+button {
+  outline: none;
+  border: 0;
+}
+.userBtn {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  overflow: hidden;
+  outline: none;
+  border: 0;
+}
+.userBtn img {
+  width: 100%;
+  height: 100%;
+}
 </style>

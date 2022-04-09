@@ -1,17 +1,22 @@
 <template>
   <div :class="[showBack ? 'back' : '']" v-if="isShow">
+    <tip-com :type="status" :tipText="tipText" v-if="isShowTip"> </tip-com>
     <!-- 如果不显示黑色背景则为静态发布块 宽度100% -->
-    <div class="setBar" v-if="true" :class="[showBack ? 'shotBarWidth' : '']">
+    <div
+      class="setBar"
+      v-if="true"
+      :class="[showBack ? 'shotBarWidth' : '', showShadow ? 'shadow' : '']"
+    >
       <!-- 对话框 -->
       <dialogue-box @yes="deleteAll" @hideDialog="confirm" v-show="dialogShow">
         <template #content>编辑内容将全部消失</template>
       </dialogue-box>
       <!-- 发布块标题 -->
-      <div class="top" v-if="showTop">
+      <div class="top" v-if="showTop" style="border: 0">
         <div><slot name="title">快捷发布</slot></div>
-        <div>
+        <div class="closeBtn">
           <button @click="confirm">
-            <slot name="editText">删除</slot>
+            <slot name="editText"><i class="iconfont icon-close"></i></slot>
           </button>
         </div>
       </div>
@@ -57,15 +62,31 @@
           <div class="funcBar" v-if="displayUrls.length < 3">
             <!-- 添加图片 -->
             <div class="addBtn">
-              <i class="iconfont">add</i>
-              <input type="file" @change="getUrl" multiple="multiple" />
+              <button>
+                <i class="iconfont icon-icon3"></i>
+                <input type="file" @change="getUrl" multiple="multiple" />
+              </button>
             </div>
             <!-- 添加话题 -->
-            <div class="topic"><button @click="addTopic">话题</button></div>
+            <div class="topic">
+              <button @click="addTopic">
+                <i class="iconfont icon-huati"></i>
+              </button>
+            </div>
+            <div class="video">
+              <button>
+                <i class="iconfont icon-shipinbofang"></i>
+              </button>
+            </div>
             <!-- 发送动态 -->
           </div>
           <div class="post">
-            <button class="postBtn" @click="postNew">
+            <button
+              class="postBtn"
+              @click="postNew"
+              :disabled="isDisabled"
+              :class="[isDisabled ? 'disabled' : '']"
+            >
               <slot name="btnName">发送</slot>
             </button>
           </div>
@@ -81,6 +102,7 @@
 import DialogueBox from "../components/common/DialogueBar.vue";
 import { SentBlog, getUserInfo, GetPublic } from "../assets/request/index.js";
 import { mapMutations } from "vuex";
+import TipCom from "./common/Single/TipCom.vue";
 export default {
   props: {
     useTo: String,
@@ -92,6 +114,7 @@ export default {
     placeholder: String,
     forwardId: Number,
     editId: Number,
+    showShadow: Boolean,
   },
   data() {
     return {
@@ -104,9 +127,13 @@ export default {
       editFlag: null,
       editArr: null,
       copyArr: null,
+      isShowTip: false,
+      status: null,
+      tipText: null,
+      isDisabled: false,
     };
   },
-  components: { DialogueBox },
+  components: { DialogueBox, TipCom },
   computed: {
     markIndex() {
       //如果当前文本包含# 则返回#后的信息 如果添加新的#则匹配新的值
@@ -194,6 +221,7 @@ export default {
     ...mapMutations(["addData", "updateUserInfo", "updateHomePageDynamic"]),
     //测试发布模块
     async postNew() {
+      this.isDisabled = true;
       if (this.textarea) {
         let form = new FormData();
         for (let url of Object.values(this.postUrls)) {
@@ -213,12 +241,32 @@ export default {
           //发送动态后获取用户信息
           console.log(this.$store.state.userInfo.profileUrl);
           let result = await getUserInfo(this.$store.state.userInfo.profileUrl);
+
           this.updateUserInfo(result.data.data);
+          if (result.data.message.includes("主页")) {
+            this.status = "success";
+            this.tipText = "发布成功";
+            this.isShowTip = true;
+          } else {
+            this.status = "error";
+            this.tipText = "发布失败";
+            this.isShowTip = true;
+          }
+
           console.log(result);
         } else if (this.useTo == "forward") {
           form.append("forwardDynamicId", this.forwardId);
-          console.log("转发了");
-          await SentBlog(form);
+
+          let result = await SentBlog(form);
+          if (result.data.message.includes("成功")) {
+            this.status = "success";
+            this.tipText = "转发成功";
+            this.isShowTip = true;
+          } else {
+            this.status = "error";
+            this.tipText = "转发失败";
+            this.isShowTip = true;
+          }
         } else if (this.useTo == "edit") {
           form.append("id", this.editId);
           form.append("fileArray", this.editArr);
@@ -231,8 +279,14 @@ export default {
         this.textarea = "";
         this.displayUrls = [];
       } else {
-        console.log("关键信息不能为空");
+        this.status = "error";
+        this.tipText = "忘填文字辣";
+        this.isShowTip = true;
       }
+      setTimeout(() => {
+        this.isShowTip = false;
+        this.isDisabled = false;
+      }, 2000);
       //点击发送后隐藏
       this.isShow = !this.hideAfterSent;
     },
@@ -283,14 +337,14 @@ export default {
   border-radius: 10px;
 }
 .topicTip .topics {
-  width: 100%;
+  width: auto;
   height: auto;
 }
 .topicTip .topics p {
   white-space: break-spaces;
-  width: 100%;
-  background: rgb(181, 184, 177);
-  padding: 5px;
+  width: auto;
+  background: rgb(207, 208, 206);
+  padding: 5px 10px;
   border-radius: 10px;
 }
 .topicTip .topics p:hover {
@@ -300,10 +354,32 @@ export default {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  margin: 5px;
 }
 .funcBar {
   display: flex;
   justify-content: flex-start;
+  align-items: center;
+}
+.funcBar button {
+  outline: none;
+  background: transparent;
+  border: 0;
+  transition: all ease 0.35s;
+  padding: 10px;
+
+  border-radius: 50%;
+}
+.funcBar button:hover {
+  color: royalblue;
+  transform: scale(1.15);
+  background: rgb(218, 221, 221);
+}
+.funcBar button:active {
+  transform: scale(0.9);
+}
+.funcBar button i {
+  font-size: 35px;
 }
 .funcBar div {
   margin: 0 10px;
@@ -323,13 +399,16 @@ export default {
 .setBar {
   width: 100%;
   height: auto;
-  background: rgb(211, 210, 210);
+  background: #fff;
 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 15px;
   border-radius: 8px;
+}
+.shadow {
+  box-shadow: 0 1px 3px rgba(18, 18, 18, 0.2);
 }
 .shotBarWidth {
   width: 800px;
@@ -360,12 +439,11 @@ export default {
 }
 .addBtn {
   position: relative;
-  border: 2px solid black;
-  width: 80px;
-  height: 40px;
+  width: auto;
+  height: auto;
 }
 .addBtn input {
-  width: 100%;
+  width: 30px;
 }
 
 .addBtn i {
@@ -467,23 +545,42 @@ export default {
   height: 100%;
 }
 .postBtn {
-  width: 65px;
-  height: 40px;
-  border: 0;
-  transition: all ease-in 0.3s;
-  background: steelblue;
-  border-radius: 20px;
-}
-
-.postBtn:hover {
+  width: 80px;
+  height: 45px;
   background: royalblue;
+  color: white;
+  border-radius: 23px;
+  border: 0;
+  transition: all ease 0.3s;
+  outline: none;
+  cursor: pointer;
+}
+.disabled {
+  cursor: not-allowed;
+  background: grey;
+}
+.postBtn:hover {
+  transform: translateY(-3px);
+}
+.postBtn:active {
+  transform: translateY(3px);
 }
 .top {
   width: 100%;
   height: auto;
   padding: 10px;
+  margin: 5px 0;
 }
 .top button {
   color: black;
+  outline: none;
+  border: 0;
+  transition: all ease 0.3s;
+}
+.top button:hover {
+  transform: scale(1.1);
+}
+.top button:active {
+  transform: scale(0.9);
 }
 </style>

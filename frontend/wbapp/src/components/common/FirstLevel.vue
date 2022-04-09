@@ -1,8 +1,14 @@
 <template>
   <div :class="[showBack ? 'back' : '']">
+    <dialogue-bar v-if="isShowD" @yes="delItem" @hideDialog="isShowD = false">
+      <template #title> 真的要删除该条评论吗？</template>
+      <template #content> 无法恢复哦！</template>
+    </dialogue-bar>
     <div class="box">
       <div class="top" v-show="showBack">
-        <div class="goBack"><button @click="goBack">关闭</button></div>
+        <div class="goBack">
+          <button @click="goBack"><i class="iconfont icon-chahao"></i></button>
+        </div>
       </div>
       <div
         class="comItem"
@@ -38,8 +44,14 @@
           <div class="funcBar">
             <div class="time">{{ createdTime }}</div>
             <div class="mulFun">
-              {{ replyCount }} <button @click="delItem">删除</button
-              ><button @click="isShowCom = true">评论</button>
+              <button @click="isShowD = true">
+                <i
+                  class="iconfont icon-shanchu"
+                  style="font-size: 28px"
+                ></i></button
+              ><button @click="isShowCom = true">
+                <i class="iconfont icon-pinglunxiao"></i>
+              </button>
             </div>
           </div>
 
@@ -70,8 +82,9 @@ import {
 } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
 import SecondLevel from "./SecondLevel.vue";
 import SetCom from "./SetCom.vue";
+import DialogueBar from "./DialogueBar.vue";
 export default {
-  components: { SecondLevel, SetCom },
+  components: { SecondLevel, SetCom, DialogueBar },
   props: {
     dynamicInfo: Object,
     commentInfo: Object,
@@ -87,6 +100,7 @@ export default {
       comCount: 2,
       showBack: false,
       profile: this.commentInfo.user.photo,
+      isShowD: false,
     };
   },
   methods: {
@@ -180,12 +194,12 @@ export default {
   left: 0;
   top: 0;
   display: flex;
+  background: rgba(0, 0, 0, 0.4);
   align-items: center;
   justify-content: center;
   z-index: 1000;
   height: 100%;
   width: 100%;
-  background: rgba(0, 0, 0, 0.8);
 }
 .secondLevel {
   width: 100%;
@@ -198,14 +212,18 @@ export default {
 .comItem {
   width: 100%;
   /* min-height: 100px; */
+  background: #fff;
   height: auto;
-  background: #f2f6fc;
   padding: 5px;
-  border-radius: 8px;
+  border-radius: 0 0 8px 8px;
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
   margin-bottom: 5px;
+}
+
+.comItem:hover .mulFun {
+  display: block;
 }
 .shotBar {
   width: 700px;
@@ -217,9 +235,23 @@ export default {
   background: white;
   display: flex;
   justify-content: flex-end;
+  border-radius: 8px 8px 0 0;
+}
+.goBack {
+  padding: 10px;
 }
 .goBack button {
   color: black;
+  background: transparent;
+  outline: none;
+  border: 0;
+  transition: all ease-in-out 0.3s;
+}
+.goBack button:hover {
+  transform: scale(1.2);
+}
+.goBack button:active {
+  transform: scale(0.9);
 }
 .profile {
   width: 70px;
@@ -265,14 +297,46 @@ export default {
 }
 
 .funcBar {
-  height: auto;
+  min-height: 55px;
   padding: 5px 0;
   display: flex;
   align-items: center;
+  transition: all ease 0.3s;
   justify-content: space-between;
 }
 .secondLevelBar {
   display: flex;
   flex-direction: column;
+}
+.secondLevelBar p {
+  cursor: pointer;
+  transition: all ease 0.3s;
+}
+.secondLevelBar p:hover {
+  color: royalblue;
+}
+.mulFun {
+  display: none;
+}
+.mulFun button {
+  background: transparent;
+  outline: none;
+  border: 0;
+  transition: all ease 0.3s;
+
+  margin: 5px;
+}
+.mulFun button:hover i {
+  color: royalblue;
+}
+.mulFun button:active {
+  transform: scale(0.9);
+}
+.mulFun button:hover {
+  transform: scale(1.2);
+}
+.mulFun button i {
+  padding: 5px;
+  transition: all ease 0.3s;
 }
 </style>

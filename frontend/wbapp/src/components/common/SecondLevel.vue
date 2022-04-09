@@ -1,5 +1,9 @@
 <template>
   <div class="comItem2">
+    <dialogue-bar v-if="isShowD" @yes="delItem" @hideDialog="isShowD = false">
+      <template #title>确认删除该条评论吗？</template>
+      <template #content> 无法恢复哦！</template>
+    </dialogue-bar>
     <set-com
       :isShowTitle="true"
       :dynamicInfo="dynamicInfo"
@@ -29,8 +33,14 @@
       <div class="funcBar">
         <div class="time">{{ createdTime }}</div>
         <div class="mulFun">
-          <button @click="delItem">删除</button
-          ><button @click="isShowSet = true">评论</button>
+          <button @click="isShowD = true">
+            <i
+              class="iconfont icon-shanchu"
+              style="font-size: 30px"
+            ></i></button
+          ><button @click="isShowSet = true">
+            <i class="iconfont icon-pinglunxiao"></i>
+          </button>
         </div>
       </div>
       <!-- 内容区阿斯顿发生地方 -->
@@ -43,6 +53,7 @@
 import { getCreateTime } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/PublicFun.js";
 import { delComment } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
 import SetCom from "./SetCom.vue";
+import DialogueBar from "./DialogueBar.vue";
 export default {
   props: {
     dynamicInfo: Object,
@@ -50,12 +61,13 @@ export default {
     floorId: Number,
   },
   emits: ["getNew"],
-  components: { SetCom },
+  components: { SetCom, DialogueBar },
   data() {
     return {
       isShowSet: false,
       replyText: this.secondItem.replyText,
       profile: this.secondItem.user.photo,
+      isShowD: false,
     };
   },
   computed: {
@@ -98,14 +110,15 @@ export default {
 .comItem2 {
   width: 100%;
   /* min-height: 100px; */
-  background: rgba(117, 116, 116, 0.4);
-  border-radius: 10px;
+  border-left: 3px solid rgba(31, 31, 31, 0.4);
   height: auto;
   padding: 5px;
   display: flex;
-  margin: 3px 0;
   align-items: flex-start;
   justify-content: flex-start;
+}
+.comItem2:hover .mulFun {
+  opacity: 1;
 }
 .profile {
   width: 60px;
@@ -125,12 +138,13 @@ export default {
   flex: 1;
   height: 100%;
 }
+
 .replyInfo {
-  width: 100%;
+  width: auto;
   height: auto;
   padding: 5px;
-  background: rgb(218, 215, 215);
   border-radius: 5px;
+  background: rgb(233, 231, 231);
 }
 .content {
   display: flex;
@@ -164,5 +178,22 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.mulFun {
+  opacity: 0;
+}
+.mulFun button {
+  outline: none;
+  border: 0;
+  padding: 5px;
+  margin: 5px;
+  transition: all ease 0.3s;
+}
+.mulFun button:hover {
+  color: royalblue;
+  transform: scale(1.2);
+}
+.mulFun button:active {
+  transform: scale(0.9);
 }
 </style>

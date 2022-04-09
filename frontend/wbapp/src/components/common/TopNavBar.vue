@@ -3,19 +3,23 @@
     <div class="tach-bar"></div>
     <div class="top-bar-center">
       <div class="left">
-        <div class="left-search">
-          <label for="input"><i class="iconfont icon-sousuo"></i></label>
-
+        <div class="search">
+          <label for="input" class="searchLabel"
+            ><i class="iconfont icon-sousuo" style="font-size: 37px"></i
+          ></label>
           <input id="input" type="text" />
         </div>
       </div>
       <div class="center">
-        <ul>
-          <li><slot name="center1">center1</slot></li>
-          <li><slot name="center2">center2</slot></li>
-          <li><slot name="center3">center3</slot></li>
-          <li><slot name="center4">center4</slot></li>
-          <li><slot name="center5">center5</slot></li>
+        <ul ref="ulBoxRef">
+          <template v-for="n of 5" :key="`center${n}`">
+            <li
+              @click="change(n)"
+              :class="[nowTab == `center${n}` ? 'chosen' : '']"
+            >
+              <slot :name="`center${n}`">center{{ n }}</slot>
+            </li>
+          </template>
         </ul>
       </div>
       <div class="right">
@@ -33,9 +37,16 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      nowTab: null,
+    };
   },
-  methods: {},
+  methods: {
+    change(n) {
+      this.nowTab = `center${n}`;
+      this.nowNum = n;
+    },
+  },
 };
 </script>
 
@@ -49,18 +60,18 @@ li {
   list-style: none;
 }
 .top-bar {
+  width: 95%;
+  height: 80px;
   z-index: 1000;
   position: fixed;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   top: 0;
   display: flex;
-  width: 100vw;
-  height: 80px;
+  background: #fff;
   justify-content: space-between;
-  background: royalblue
-    url("https://h5.sinaimg.cn/upload/100/1733/2022/03/02/3.3.png") no-repeat;
-  background-size: contain;
-  background-position: -75px;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(18, 18, 18, 0.2);
 }
 
 .top-bar-center {
@@ -77,42 +88,60 @@ li {
   align-items: center;
   justify-content: center;
 }
-.left-search {
-  width: 100%;
-  height: 45px;
+.search {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: gray;
-  padding: 3px;
-  border-radius: 20px;
+  width: auto;
+  height: 52px;
+  padding: 7px;
+  border-radius: 25px;
+  color: whitesmoke;
+  transition: all ease 0.4s;
+  /* background: rgb(194, 190, 190); */
+  background: royalblue;
 }
-.left-search input {
-  text-indent: 4px;
+.searchLabel {
+  /* background: seagreen; */
+}
+.search input {
+  width: 0;
   font-size: 20px;
-  width: 150px;
-  border: 0;
-  background: transparent;
   outline: none;
+  border: 0;
+  padding: 5px 0;
+  transition: all ease 0.4s;
+  background: transparent;
+  text-indent: 3px;
 }
-.left-search i {
-  font-size: 25px;
+.search:hover {
+  color: black;
+  background: rgb(192, 205, 243);
+}
+.search:hover input {
+  width: 150px;
 }
 .right {
   width: 300px;
   height: 100%;
-  background: red;
 }
 
 .center {
+  position: relative;
   flex: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: gray;
 }
-.center ul,
-.right ul {
+.tracker {
+  height: 100%;
+  width: 70px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: turquoise;
+}
+.center ul {
   width: 100%;
   height: 100%;
   display: flex;
@@ -120,6 +149,11 @@ li {
   align-items: center;
 }
 .right ul {
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  align-items: center;
   justify-content: flex-end;
 }
 .center li,
@@ -129,15 +163,23 @@ li {
   align-items: center;
   width: 70px;
   height: 100%;
-  margin: 0 2px;
+  font-size: 20px;
+  font-weight: bolder;
+  border-bottom: 4px solid transparent;
+
+  transition: all ease 0.2s;
+}
+.center li:hover,
+.right li:hover {
+  color: royalblue;
+}
+.chosen {
+  border-bottom: 4px solid royalblue;
+  color: royalblue;
 }
 
-.tach-bar {
-  position: absolute;
-  left: 10px;
-  top: 0;
-  width: 50px;
-  height: 100%;
-  border: 2px solid red;
-}
+/* .center li:hover a,
+.right li:hover a {
+  color: royalblue;
+} */
 </style>

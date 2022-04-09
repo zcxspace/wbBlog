@@ -1,14 +1,21 @@
 <template>
   <div class="leftBar">
-    <div class="title">
+    <div class="title" style="font-size: 20px">
       <h2><slot name="title">侧边栏标题</slot></h2>
     </div>
     <div class="tabs">
       <ul class="tabBox">
         <li v-for="com of ComArr" :key="com.comName">
-          <div class="icon">字体</div>
-          <router-link :to="{ name: `${com.comName}` }">{{
-            com.comName
+          <div class="icon">
+            <i class="iconfont" :class="com.icon" :style="com.size"></i>
+          </div>
+          <router-link
+            :to="{ name: `${com.comName}`, params: `${com.params}` }"
+            v-if="com.params"
+            >{{ com.title }}</router-link
+          >
+          <router-link :to="{ name: `${com.comName}` }" v-else>{{
+            com.title
           }}</router-link>
         </li>
       </ul>
@@ -24,6 +31,9 @@ export default {
   data() {
     return {};
   },
+  created() {
+    console.log(this.ComArr);
+  },
 };
 </script>
 
@@ -33,8 +43,21 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
+a {
+  text-decoration: none;
+  color: black;
+}
+a:hover {
+}
+li:hover a,
+li:hover i {
+  color: royalblue;
+}
 li {
   list-style: none;
+}
+i {
+  font-size: 35px;
 }
 .leftBar {
   width: 100%;
@@ -42,6 +65,7 @@ li {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 3px;
 }
 .title {
   width: 100%;
@@ -66,13 +90,15 @@ li {
   display: flex;
   border-radius: 5px;
   align-items: center;
+  justify-content: flex-start;
+  padding-left: 4px;
   transition: all ease 0.3s;
 }
 .active {
   color: rgb(199, 132, 9);
 }
 .tabBox li:hover {
-  background: rgb(228, 226, 226);
+  background: rgb(243, 241, 241);
 }
 .icon {
   margin: 0 15px;

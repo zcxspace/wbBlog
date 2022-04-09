@@ -4,13 +4,13 @@
       <template #title>确认取消关注么?</template>
     </dialogue-bar>
     <el-affix :offset="80">
-      <div class="top">
+      <div class="top" ref="backBar">
         <div class="goBackTab"><button @click="goBack">返回</button></div>
       </div>
     </el-affix>
-    <div class="background">
-      <img src="#" alt="背景图片" />
-      <div class="editBtn">
+    <div class="background" :style="backPic">
+      <!-- <img :src="backUrl" alt="背景图片" /> -->
+      <div class="editBtn" v-if="!isNotUser">
         <ImgCutter @cutDown="changB" :imgMove="false">
           <template #open
             ><button class="editBack">编辑背景图片</button></template
@@ -31,7 +31,7 @@
           <div class="followInfo">
             <div class="fans" @click="goToFan(1)">
               <span>粉丝</span>
-              <h4>{{ userInfo.followMe }}</h4>
+              <h4>{{ userInfo.fansCount }}</h4>
             </div>
 
             <div class="follow" @click="goToFan(2)">
@@ -50,17 +50,10 @@
       </div>
 
       <div class="infoBox">
-        <!-- 显示或隐藏用户信息 -->
-        <div v-if="isShrink" @click="isShrink = !isShrink">个人信息</div>
-        <div
-          v-for="(info, index) of infos"
-          :key="index"
-          @click="isShrink = !isShrink"
-          v-else
-        >
-          {{ info.title }}
-        </div>
+        {{ testdata }}
+        <select-com :userInfo="displayInfo"></select-com>
       </div>
+
       <div class="tab">
         <ul>
           <li
@@ -93,11 +86,12 @@ import {
   unFollow,
 } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
 import DialogueBar from "../DialogueBar.vue";
+import SelectCom from "../Single/selectCom.vue";
 export default {
   props: {
     path: String,
   },
-  name: "RandomInfo",
+  name: "MuserInfo",
 
   data() {
     return {
@@ -108,22 +102,29 @@ export default {
       isUnFollow: true,
       isShrink: true,
       currentTab: "blog",
-      infoStyle: "info-style",
+      displayInfo: [],
+      isOpen: false,
       tabs: [
-        { title: "精选", com: "select" },
+        { title: "精选", com: "great" },
         { title: "微博", com: "blog" },
-        { title: "视频", com: "video" },
+        { title: "视频", com: "sd" },
         { title: "相册", com: "album" },
       ],
       height: null,
-      profilePath: this.$store.state.userInfo.photo,
+      profilePath: null,
+      backUrl: null,
       isShowDialogue: false,
+      backPic: {
+        background: null,
+      },
+      testdata: null,
     };
   },
   components: {
     blog,
     ImgCutter,
     DialogueBar,
+    SelectCom,
   },
 
   methods: {
@@ -178,29 +179,44 @@ export default {
     changeDia() {
       this.isShowDialogue = !this.isShowDialogue;
     },
+    // handleScroll() {
+    //   console.log(0);
+    //   console.log(this.$refs.backBar.getBoundingClientRect().top);
+    // },
   },
-
+  // mounted() {
+  //   console.log("xiang");
+  //   window.addEventListener("scroll", this.handleScroll);
+  // },
   async created() {
     console.log(this.path);
+
+    //如果为随机用户跳转则获取地址
+    // if (this.path) {
     if (this.path.slice(1) == this.$store.state.userInfo.id) {
       this.isNotUser = false;
     }
-    //如果为随机用户跳转则获取地址
-    if (this.path) {
-      let path = "http://120.25.125.57:8080/xhywblog/users/" + this.path;
-      let result = await getUserInfo(path);
-      console.log(result);
-      this.userInfo = result.data.data.user;
-      this.dynamics = result.data.data.dynamic;
-      console.log(this.userInfo);
-      console.log(this.dynamics);
-    } else {
-      this.userInfo = this.$store.state.userInfo;
-      this.dynamics = this.$store.state.userDynamic;
-    }
-
-    // console.log(this.path);
-    console.log("用户页生成了");
+    let path = "http://120.25.125.57:8080/xhywblog/users/" + this.path;
+    let result = await getUserInfo(path);
+    console.log(result);
+    this.userInfo = result.data.data.user;
+    this.dynamics = result.data.data.dynamic;
+    this.profilePath = result.data.data.user.photo;
+    this.backPic.background = ` no-repeat center/100% url(${result.data.data.user.background})  `;
+    let {
+      intro = "这个人比较懒",
+      interests = "没啥兴趣",
+      trait = "没有，有就是摸鱼",
+    } = result.data.data.user;
+    console.log(result.data.data.user);
+    this.displayInfo = [intro, interests, trait];
+    console.log(intro);
+    // } else {
+    //   this.userInfo = this.$store.state.userInfo;
+    //   this.dynamics = this.$store.state.userDynamic;
+    //   this.profilePath = this.$store.state.userInfo.photo;
+    //   this.backPic.background = ` no-repeat center/100% url(${this.$store.state.userInfo.background})  `;
+    // }
   },
 };
 </script>
@@ -229,9 +245,12 @@ export default {
 }
 .background {
   width: 100%;
-  height: 250px;
+  height: 300px;
+  background-position: center;
+  background-size: contain;
   position: relative;
 }
+
 .background:hover .editBack {
   display: block;
 }
@@ -240,24 +259,33 @@ export default {
   right: 10px;
   bottom: 10px;
 }
-.background img {
-  width: 100%;
-  height: 100%;
-}
 .info-style {
   background: red;
 }
 .infoBox {
   flex: 1;
-  padding-top: 30px;
-  height: 100%;
+  height: auto;
 }
-.infoBox div {
-  height: 50px;
+.infoBox ul {
   width: 100%;
+  height: 50px;
   display: flex;
-  align-items: center;
-  padding-left: 30px;
+  padding: 0 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  background: orange;
+  overflow: hidden;
+}
+.openStyle {
+  height: auto;
+}
+.infoBox ul li {
+  width: 100%;
+  height: 50px;
+}
+.tab {
+  margin-bottom: 20px;
 }
 .tab ul {
   width: 100%;
@@ -279,8 +307,8 @@ export default {
   justify-content: center;
 }
 .active {
-  background: rgb(221, 220, 206);
-  color: rgb(255, 166, 0);
+  background: rgb(218, 217, 214);
+  color: royalblue;
 }
 
 .myPage {
@@ -326,7 +354,9 @@ export default {
   top: -75px;
   overflow: hidden;
   background: whitesmoke;
+  transition: all ease 0.4s;
   border-radius: 50%;
+  border: 4px solid white;
   /* padding: 10px; */
 }
 .userFile img {

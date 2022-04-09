@@ -8,7 +8,9 @@
       </template>
 
       <template #center-left>
-        <left-bar :ComArr="ComArr"></left-bar>
+        <left-bar :ComArr="ComArr">
+          <template #title>首页</template>
+        </left-bar>
       </template>
       <template #center-right><hot-word></hot-word> </template>
     </main-layout>
@@ -25,7 +27,20 @@ export default {
     return {
       show: true,
       dynamics: this.$store.state.userDynamic,
-      ComArr: [{ comName: "HomePage" }],
+      ComArr: [
+        {
+          comName: "HomePage",
+          icon: "icon-caidan",
+          title: "全部微博",
+          size: "font-size:30px",
+        },
+        {
+          comName: "HomePage",
+          icon: "icon-zuixinpeizhi",
+          title: "最新微博",
+          size: "font-size:30px",
+        },
+      ],
     };
   },
   computed: {

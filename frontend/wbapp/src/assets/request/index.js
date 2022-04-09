@@ -90,14 +90,11 @@ async function GetPublic() {
 }
 //发布动态
 
-async function SentBlog(form,) {
+async function SentBlog(form) {
 
-    await axios.post('http://120.25.125.57:8080/xhywblog/dynamic/publish'
-        , form, config).then((res) => {
-            console.log(res)
-        }).catch((e) => {
-            console.log(e)
-        })
+    let result = await axios.post('http://120.25.125.57:8080/xhywblog/dynamic/publish'
+        , form, config);
+    return result;
 }
 //编辑动态
 async function editDynamic(form) {
@@ -195,5 +192,19 @@ async function getFollower(userId, lookId) {
     });
     return result;
 }
-export { changeBack, getFollower, getFans, unFollow, follow, delComment, getComment, postComment, GetPublic, getCaptcha, getUserInfo, SignUp, SignIn, GetHotWord, SentBlog, changeProfile, changeUserInfo, DeleteDynamic, editDynamic, isLike }
+//获取话题动态
+async function getTopics(topic) {
+    let result = axios.get('http://120.25.125.57:8080/xhywblog/dynamic/queryTopic', {
+        params: {
+            topic: topic,
+        }
+    })
+    return result;
+}
+//获取热榜信息
+async function getHotWord() {
+    let result = axios.post(' http://120.25.125.57:8080/xhywblog/dynamic/getHotDynamic');
+    return result;
+}
+export { getHotWord, getTopics, changeBack, getFollower, getFans, unFollow, follow, delComment, getComment, postComment, GetPublic, getCaptcha, getUserInfo, SignUp, SignIn, GetHotWord, SentBlog, changeProfile, changeUserInfo, DeleteDynamic, editDynamic, isLike }
 

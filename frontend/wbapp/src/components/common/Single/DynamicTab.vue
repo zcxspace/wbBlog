@@ -26,20 +26,29 @@
       <template #editText>取消编辑</template>
     </set-bar>
     <!-- 下拉列表区 -->
-    <div class="selectMenu" @click="isShowMenu = !isShowMenu" v-if="checkUser">
-      字
+    <div class="selectMenu" v-if="checkUser">
+      <el-dropdown placement="bottom-end" trigger="click" size="large">
+        <span class="el-dropdown-link">
+          <i class="iconfont icon-xuanzeqizhankai"></i>
+        </span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="showBar()">编辑微博</el-dropdown-item>
+            <el-dropdown-item @click="isShowDialog = true"
+              >删除微博</el-dropdown-item
+            >
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
       <div class="menuBox" v-show="isShowMenu">
-        <ul>
-          <li @click="showBar()">编辑微博</li>
-          <li @click="isShowDialog = true">删除微博</li>
-        </ul>
+        <ul></ul>
       </div>
     </div>
 
     <!-- 头部用户信息区 -->
     <div class="userInfo">
-      <img :src="profile" alt="用户头像" @click="test1" />
-      <h2>{{ getName }}</h2>
+      <img :src="profile" alt="用户头像" @click="goToInfo" />
+      <h2 @click="goToInfo">{{ getName }}</h2>
     </div>
     <!-- 头部信息区结束 -->
 
@@ -51,7 +60,11 @@
           <!-- 无转发文本区 -->
           <div class="normal" v-if="isShowText">
             <template v-for="(item, index) of getStr(this.text)" :key="index">
-              <a v-if="item.match(/#[^#]+#/gi)" href="#">
+              <a
+                @click.prevent="toTopics(item)"
+                v-if="item.match(/#[^#]+#/gi)"
+                href="#"
+              >
                 {{ item }}
               </a>
               <span v-else>{{ item }}</span>
@@ -64,16 +77,20 @@
               v-for="(item, index) of getStr(this.dynamicInfo.text)"
               :key="index"
             >
-              <a v-if="item.match(/#[^#]+#/gi)" href="#">
+              <a
+                @click.prevent="toTopics(item)"
+                v-if="item.match(/#[^#]+#/gi)"
+                href="#"
+              >
                 {{ item }}
               </a>
               <span v-else>{{ item }}</span>
             </template>
+
             <template
               v-for="(item, index) of this.dynamicInfo.forwardTexts"
               :key="index"
             >
-              循环处理
               <router-link
                 :to="{
                   name: 'RandomInfo',
@@ -83,7 +100,11 @@
               >:
               <!-- 处理转发话题 -->
               <template v-for="(item, index) of getStr(item.text)" :key="index">
-                <a v-if="item.match(/#[^#]+#/gi)" href="#">
+                <a
+                  @click.prevent="toTopics(item)"
+                  v-if="item.match(/#[^#]+#/gi)"
+                  href="#"
+                >
                   {{ item }}
                 </a>
                 <span v-else>{{ item }}</span>
@@ -112,22 +133,32 @@
     </div>
     <!-- 转发动态区结束 -->
     <div class="tabs">
-      <div class="forward"><button @click="showForward">转发</button></div>
-      <div class="comments"><button @click="showComment">评论</button></div>
+      <div class="forward">
+        <button @click="showForward">
+          <i class="iconfont icon-zhuanfa1"></i> 转发
+        </button>
+      </div>
+      <div class="comments">
+        <button @click="showComment">
+          <i class="iconfont icon-pinglunxiao" style="font-size: 27px"></i>评论
+        </button>
+      </div>
       <div class="likes">
-        <button @click="test" :class="[isLike ? 'like' : '']">点赞</button>
+        <button @click="test" :class="[isLike ? 'like' : '']">
+          <i class="iconfont icon-icon" style="font-size: 30px"></i>点赞
+        </button>
       </div>
     </div>
     <!-- 转发编辑模块 -->
     <div class="functionBar" v-show="isForwardShow">
       <div class="avatar">
-        <img src="" alt="" />
+        <img :src="profile" alt="用户头像" />
       </div>
       <div class="editArea">
         <!-- 转发区 -->
         <div class="forwardBar">
           <set-bar
-            class="setBar"
+            class="forwardSet"
             :showBack="false"
             :showTop="false"
             :textareaHeight="1"
@@ -229,12 +260,39 @@ export default {
       }
     },
     profile() {
-      return this.dynamicInfo.user
-        ? this.dynamicInfo.user.photo
-        : this.$store.state.userInfo.photo;
+      if (this.dynamicInfo.user) {
+        return this.dynamicInfo.user.photo;
+      } else {
+        return this.userInfo.id == this.$store.state.userInfo.id
+          ? this.$store.state.userInfo.photo
+          : this.userInfo.photo;
+      }
     },
   },
   methods: {
+    //通过profileUrl获取的没有user信息
+    //点击用户头像与姓名跳转用户页
+    goToInfo() {
+      if (this.dynamicInfo.user) {
+        this.$router.push({
+          name: "RandomInfo",
+          params: { path: `u${this.dynamicInfo.user.id}` },
+        });
+      } else {
+        this.$router.push({
+          name: "RandomInfo",
+          params: { path: `u${this.userInfo.id}` },
+        });
+      }
+    },
+    //去往话题页
+    toTopics(topic) {
+      this.$router.push({
+        name: "TopicsPage",
+        params: { type: "all", topic: topic },
+      });
+    },
+    //获得分割字符串数组
     getStr(str) {
       console.log(str);
       console.log(splitStr(str));
@@ -294,6 +352,11 @@ export default {
     console.log(this.dynamicInfo.userId);
     console.log(this.hasPhotos);
     console.log(this.userInfo);
+    console.log(this.profile);
+    console.log(this.dynamicInfo);
+    console.log(Boolean(this.dynamicInfo.user));
+    // console.log(this.dynamicInfo.user.photo);
+    console.log(this.$store.state.userInfo.photo);
     // console.log(this.$store.state.userInfo.id);
     // console.log(this.dynamicInfo.user.id);
   },
@@ -309,13 +372,17 @@ export default {
 li {
   list-style: none;
 }
+a {
+  text-decoration: none;
+  color: royalblue;
+}
 .dynamic {
   position: relative;
   width: 100%;
   height: auto;
   padding: 20px 20px 0 20px;
   background: #fff;
-  box-shadow: 0 1px 3px rgba(18, 18, 18, 0.1);
+  box-shadow: 0 1px 3px rgba(18, 18, 18, 0.2);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -334,16 +401,23 @@ li {
   margin-top: 10px;
   display: inline-block;
   font-size: 20px;
+  cursor: pointer;
+  transition: all ease 0.4s;
+}
+.userInfo h2:hover {
+  color: royalblue;
 }
 .userInfo img {
   height: 100%;
   width: 80px;
   margin-right: 10px;
   border-radius: 50%;
+  cursor: pointer;
 }
 .tabs {
   width: 100%;
-  height: 40px;
+  height: auto;
+  padding: 10px 5px;
   display: flex;
   align-items: center;
 }
@@ -356,8 +430,19 @@ li {
   align-items: center;
   justify-content: center;
 }
+.tabs div i {
+  margin: 0 5px;
+}
+.tabs div button {
+  transition: all ease 0.35s;
+}
 .tabs div:hover button {
-  color: chocolate;
+  color: royalblue;
+  transform: scale(1.1);
+}
+tabs div:active button {
+  color: royalblue;
+  transform: scale(0.9);
 }
 .tabs div button {
   width: 100%;
@@ -410,7 +495,6 @@ li {
 .selectMenu {
   width: 35px;
   height: 35px;
-  border: 2px solid black;
   position: absolute;
   right: 10px;
   top: 10px;
@@ -446,35 +530,36 @@ li {
 .functionBar {
   width: 100%;
   height: auto;
-  padding: 10px 0 0 0;
+  /* padding: 10px 0 0 0; */
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 }
 .avatar {
-  width: 40px;
-  height: 40px;
-  margin: 0 20px;
+  width: 70px;
+  height: 70px;
+  margin: 20px 20px;
+  border-radius: 50%;
+  overflow: hidden;
 }
 .avatar img {
   display: block;
   width: 100%;
   height: 100%;
-  background: chartreuse;
 }
 .editArea {
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: flex-start;
-  background: chocolate;
 }
 
 .forwardBar {
   flex: 1;
+  padding: 10px;
 }
 
-.editArea .setBar {
+.editArea .forwardSet {
   width: 100%;
 }
 

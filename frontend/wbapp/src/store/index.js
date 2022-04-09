@@ -35,6 +35,9 @@ export default createStore({
     updateUserAvatar(state, path) {
       state.userInfo.photo = path
     },
+    updateUserBg(state, path) {
+      state.userInfo.background = path
+    },
     //模拟动态发布
     addData(state, obj) {
       state.post.unshift(obj);

@@ -8,6 +8,7 @@
       :textareaHeight="4"
       :useTo="'publish'"
       :placeholder="'有什么新鲜事想分享给大家？'"
+      :showShadow="true"
     >
     </set-bar>
     <router-view></router-view>

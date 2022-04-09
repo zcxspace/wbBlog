@@ -68,14 +68,20 @@ export default {
 </script>
 
 <style scoped>
+a {
+  text-decoration: none;
+  color: royalblue;
+}
 .forwardBar {
   width: 100%;
   height: auto;
   display: flex;
   align-items: center;
-  color: whitesmoke;
+  color: rgb(66, 65, 65);
   flex-direction: column;
-  background: rgb(114, 112, 112);
+  /* background: rgb(218, 216, 216); */
+  background: rgba(156, 155, 155, 0.2);
+
   padding: 6px;
   border-radius: 10px;
   /* background: darkgoldenrod; */
@@ -154,7 +160,8 @@ export default {
   width: 50px;
   border: 0;
   outline: none;
-  color: whitesmoke;
+  color: rgb(66, 65, 65);
+
   margin: 0 4px;
   transition: all ease 0.3s;
   background: transparent;

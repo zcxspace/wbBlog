@@ -20,7 +20,7 @@
         </router-view>
       </template>
 
-      <template #center-right>右侧</template>
+      <template #center-right><hot-word></hot-word></template>
     </main-layout>
   </div>
 </template>
@@ -28,15 +28,24 @@
 <script>
 import MainLayout from "../layouts/MainLayout.vue";
 import LeftBar from "../components/common/Single/LeftBar.vue";
+import HotWord from "../components/common/HotWord.vue";
 
 export default {
   components: {
     MainLayout,
     LeftBar,
+    HotWord,
   },
   data() {
     return {
-      ComArr: [{ comName: "MuserInfo" }, { comName: "ChangeInfo" }],
+      ComArr: [
+        {
+          comName: "MuserInfo",
+          title: "个人主页",
+          params: { path: `u${this.$store.state.userInfo.id}` },
+        },
+        { comName: "ChangeInfo", title: "编辑信息" },
+      ],
     };
   },
   computed: {
@@ -63,7 +72,7 @@ export default {
     },
   },
   created() {
-    console.log(this.$store.state.userInfo);
+    // console.log(this.$store.state.userInfo);
   },
 };
 </script>

@@ -266,6 +266,7 @@ export default {
     this.userInfo = Object.assign({}, this.$store.state.userInfo);
     this.userBirthday = this.userInfo.birthday;
     this.path = this.$store.state.userInfo.photo;
+    console.log(this.userInfo);
   },
 };
 </script>

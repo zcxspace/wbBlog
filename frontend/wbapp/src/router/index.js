@@ -3,9 +3,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
   {
     path: '/',
-    // redirect: '/User/:info',
+
     name: 'home',
-    component: () => import('../views/ViewerView.vue')
+    component: () => import('../views/ViewerView.vue'),
   },
 
   {
@@ -16,6 +16,7 @@ const routes = [
     children: [
       {
         path: 'UserPage',
+        name: 'userPage',
         redirect: '/User/UserPage/MainUser',
         component: () => import('../pages/UserPage.vue'),
         children: [{
@@ -24,18 +25,26 @@ const routes = [
           component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/components/common/UserInfo/MainPage.vue'),
           meta: {
             keepAlive: true
-          }
+          },
+          props: true,
         },
         {
           path: 'ChangeInfo',
           name: 'ChangeInfo',
-          component: () => import('../components/common/UserInfo/ChangeInfo.vue'),
+          component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/UserPages/AlertInfo.vue'),
           meta: {
             keepAlive: true
           }
-        }
+        },
+        {
+          path: 'AlertInfo',
+          name: 'AlertInfo',
+          component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/UserPages/AlertInfo.vue')
+        },
+
         ]
       },
+
       {
         //微博主页
         path: 'UserHome',
@@ -95,6 +104,12 @@ const routes = [
       {
         path: 'UserHot',
         component: () => import('../pages/UserHot.vue')
+      },
+      {
+        path: 'Topics/:type/:topic',
+        name: 'TopicsPage',
+        component: () => import('../pages/TopicsPage.vue'),
+        props: true,
       }
     ]
   },
@@ -105,6 +120,10 @@ const routes = [
   {
     path: '/SignUp',
     component: () => import('../views/SignUp.vue')
+  },
+  {
+    path: '/ToSign',
+    component: () => import("../views/ToSign.vue")
   }
   // {
   //   path: '/about',

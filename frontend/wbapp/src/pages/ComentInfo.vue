@@ -1,12 +1,14 @@
 <template>
   <div class="comment" v-infinite-scroll="load">
-    <button @click="closeAll">返回</button>
+    <div class="backBar">
+      <div class="btnBar">
+        <button @click="closeAll">
+          <i class="iconfont icon-fanhui"></i>
+        </button>
+        返回
+      </div>
+    </div>
     <dynamic-tab :dynamicInfo="info" ref="dynamic"></dynamic-tab>
-    <button @click="open">点击展开评论区</button>
-    <ul class="box">
-      <li v-for="n of num" :key="n">{{ n }}</li>
-    </ul>
-    <button @click="getHi">点击</button>
   </div>
 </template>
 
@@ -17,20 +19,12 @@ export default {
   data() {
     return {
       info: null,
-      num: 0,
     };
   },
   methods: {
     closeAll() {
       this.$refs.dynamic.openAllCom();
       this.$router.go(-1);
-    },
-    load() {
-      console.log("触发了");
-      this.num++;
-    },
-    getHi() {
-      this.$refs.dynamic.get();
     },
   },
 
@@ -45,6 +39,11 @@ export default {
 </script>
 
 <style scoped>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 .box {
   width: 100%;
   background: seagreen;
@@ -56,5 +55,32 @@ export default {
   background: royalblue;
   margin: 10px 0;
   list-style: none;
+}
+.backBar {
+  width: 100%;
+  height: auto;
+  padding: 10px;
+  font-size: 20px;
+  display: flex;
+  justify-content: flex-start;
+  background: white;
+  border-radius: 6px;
+  font-size: 25px;
+}
+.backBar button {
+  outline: none;
+  border: 0;
+  font-size: 20px;
+  transition: all ease 0.3s;
+}
+.backBar button i {
+  font-weight: bolder;
+}
+.btnBar:hover button {
+  transform: translateX(5px);
+  color: royalblue;
+}
+.btnBar:active button {
+  transform: translateX(-4px);
 }
 </style>

@@ -1,9 +1,18 @@
 <template>
   <div :class="[isShowTitle ? 'back' : '']" v-show="isOpen">
     <div class="editBar" :class="[isShowTitle ? 'height' : '']">
+      <dialogue-bar
+        v-if="isShowD"
+        @yes="closeSet"
+        @hideDialog="isShowD = false"
+      ></dialogue-bar>
       <div class="setTitle" v-if="isShowTitle">
         <div class="replyText">回复@{{ replyName }}的消息</div>
-        <div class="close"><button @click="closeSet">关闭</button></div>
+        <div class="close">
+          <button @click="confirm">
+            <i class="iconfont icon-close"></i>
+          </button>
+        </div>
       </div>
       <div class="textarea">
         <el-input
@@ -21,8 +30,10 @@
 </template>
 
 <script>
+import DialogueBar from "./DialogueBar.vue";
 import { postComment } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
 export default {
+  components: { DialogueBar },
   props: {
     isShowTitle: Boolean,
     dynamicInfo: Object,
@@ -37,13 +48,22 @@ export default {
       textarea2: "",
       isOpen: true,
       comValue: null,
+      isShowD: false,
     };
   },
   mounted() {},
   methods: {
+    confirm() {
+      if (!Number(this.textarea2)) {
+        this.closeSet();
+      } else {
+        this.isShowD = true;
+      }
+    },
     //   关闭评论弹窗
     closeSet() {
       this.$emit("close");
+
       this.isOpen = false;
     },
     async postCom() {
@@ -61,6 +81,9 @@ export default {
       }
       console.log(this.dynamicInfo.id);
       console.log(result);
+      if (this.isShowTitle) {
+        this.isOpen = false;
+      }
     },
   },
 };
@@ -89,8 +112,8 @@ export default {
   width: 100%;
   height: auto;
   padding: 10px;
+  background: #fff;
   border-radius: 8px;
-  background: wheat;
   display: flex;
   flex-direction: column;
 }
@@ -106,9 +129,15 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.replyText {
+  width: auto;
   border-radius: 5px;
-  background: rgba(0, 0, 0, 0.4);
-  padding: 0 10px;
+  background: rgba(151, 151, 151, 0.4);
+  display: flex;
+  padding: 10px;
+  align-items: center;
+  height: auto;
 }
 .btn {
   display: flex;
@@ -117,9 +146,9 @@ export default {
 .btn button {
   width: 80px;
   height: 45px;
-  background: chocolate;
+  background: royalblue;
   color: white;
-  border-radius: 22.5px;
+  border-radius: 23px;
   border: 0;
   transition: all ease 0.3s;
   outline: none;
@@ -129,5 +158,21 @@ export default {
 }
 .btn button:active {
   transform: translateY(3px);
+}
+.close button {
+  border: 0;
+  outline: none;
+  background: transparent;
+  transition: all ease 0.3s;
+  margin-right: 5px;
+}
+.close button:hover {
+  transform: scale(1.2);
+}
+.close button:active {
+  transform: scale(0.9);
+}
+.close button i {
+  font-size: 20px;
 }
 </style>

@@ -21,7 +21,9 @@ body {
   color: #2c3e50;
   overflow: -Scroll;
   overflow-x: hidden;
-  background: #f6f6f6;
+  background: rgb(230, 230, 230);
+
+  /* backdrop-filter: blur(50px); */
 }
 
 nav {
