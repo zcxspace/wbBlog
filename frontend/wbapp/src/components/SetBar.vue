@@ -44,7 +44,7 @@
             </li>
           </template>
           <li class="addBox" v-if="displayUrls.length < 3">
-            <i class="confont">字体</i>
+            <i class="iconfont icon-jia"></i>
             <input type="file" @change="getUrl" />
           </li>
         </ul>
@@ -124,7 +124,7 @@ export default {
       textarea: "",
       isShow: true,
       dialogShow: false,
-      editFlag: null,
+      isEdit: null,
       editArr: null,
       copyArr: null,
       isShowTip: false,
@@ -191,14 +191,25 @@ export default {
 
     //删除已经添加的图片
     delImg(url) {
-      //获取对标数组
-      if (this.copyArr.includes(url)) {
-        let index = this.copyArr.indexOf(url);
-        this.editArr.splice(index, 1, 1);
+      // 获取对标数组;
+      //判断是否为编辑 编辑操作复制数组 不是则操作原数组
+      if (this.isEdit) {
+        if (this.copyArr.includes(url)) {
+          let index = this.copyArr.indexOf(url);
+          this.editArr.splice(index, 1, 1);
+        }
+        let delDex = this.displayUrls.indexOf(url);
+        this.displayUrls.splice(delDex, 1);
+        this.editArr[delDex] = 1;
+      } else {
+        let delDex = this.displayUrls.indexOf(url);
+        this.displayUrls.splice(delDex, 1);
       }
-      let index = this.displayUrls.indexOf(url);
-      this.displayUrls.splice(index, 1);
-      this.editArr[index] = 1;
+
+      let delDex = this.displayUrls.indexOf(url);
+      this.displayUrls.splice(delDex, 1);
+      this.editArr[delDex] = 1;
+      console.log("test");
     },
     // 有数据后 删除提示
     confirm() {
@@ -307,8 +318,8 @@ export default {
         console.log(this.displayUrls);
         this.editArr = arr;
       } else console.log("图片为空");
-      this.editFlag = true;
-    } else this.editFlag = false;
+      this.isEdit = true;
+    } else this.isEdit = false;
   },
 };
 </script>
@@ -498,6 +509,7 @@ export default {
 }
 .imgBox button {
   position: absolute;
+  outline: none;
   right: 0;
   top: 0;
   background: transparent;
@@ -519,10 +531,7 @@ export default {
   position: relative;
   border: 2px solid black;
 }
-.addBox label i {
-  transition: all ease 0.3s;
-  font-size: 45px;
-}
+
 .addBox input {
   width: 100%;
   height: 100%;
@@ -536,9 +545,16 @@ export default {
 .addBox:hover {
   border: 2px solid royalblue;
 }
+.addBox i {
+  font-size: 30px;
+  transition: all ease 0.3s;
+}
 .addBox:hover i {
   color: royalblue;
   font-size: 50px;
+}
+.addBox:active i {
+  font-size: 30px;
 }
 .imgBox img {
   width: 100%;
