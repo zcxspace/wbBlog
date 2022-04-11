@@ -1,22 +1,29 @@
 <template>
   <div class="Viewer">
     <!-- 头部搜索区 -->
-    <div class="nav-top" v-if="isShowTop">
+    <el-affix :offset="0">
+      <div class="nav-bar">导航栏区</div>
+    </el-affix>
+    <!-- 顶部提供图片背景插槽和导航栏插槽 -->
+    <div class="nav-top">
+      <!-- 背景图片插槽 -->
+      <div class="backPic">
+        <slot name="topBackPic">默认背景</slot>
+      </div>
+      <!-- 搜索框插槽 -->
       <div class="nav-top-search">
-        <slot name="searchArea">默认搜索区域</slot>
+        <slot name="searchArea">默认导航栏</slot>
       </div>
     </div>
 
-    <slot name="top-bar">头部导航栏</slot>
-
     <!-- 板块中心区 -->
 
-    <div class="nav-center" :class="[isShowTop ? '' : 'topPadding']">
+    <div class="nav-center">
       <!-- 板块中心内容区 -->
 
       <div class="nav-center-content">
         <!-- 中心左侧区 -->
-        <el-affix :offset="80">
+        <el-affix :offset="90">
           <div class="nav-center-left">
             <slot name="center-left">左侧区域</slot>
           </div>
@@ -25,10 +32,10 @@
         <!-- 中心核心区 -->
         <div class="nav-center-center">
           <slot name="userPage"></slot>
-          <slot name="center"></slot>
+          <slot name="center">sdf</slot>
         </div>
 
-        <el-affix :offset="80">
+        <el-affix :offset="90">
           <div class="nav-center-right">
             <slot name="center-right">右侧区域</slot>
           </div>
@@ -42,9 +49,6 @@
 
 <script>
 export default {
-  props: {
-    isShowTop: Boolean,
-  },
   data() {
     return {};
   },
@@ -73,25 +77,25 @@ body {
   flex-direction: column;
   align-items: center;
 }
-.topPadding {
-  margin-top: 80px;
-}
+
 .nav-top {
   width: 100vw;
+  min-height: 200px;
   background: coral;
-  height: 330px;
-}
-.nav-top-bar i {
-  font-size: 40px;
-  transition: color ease 0.2s;
-}
-.nav-top-bar i:hover {
-  color: orange;
-}
-.nav-top {
+  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+}
+.nav-top .backPic {
+  width: 100%;
+  height: 100%;
+  background: cornflowerblue;
+}
+.nav-bar {
+  width: 100vw;
+  min-height: 100px;
+  background: chartreuse;
+  padding: 20px;
 }
 @keyframes show {
   0% {
@@ -104,19 +108,16 @@ body {
     transition: scale(1);
   }
 }
-.nav-top:hover .nav-top-search {
-  /* display: block; */
-  opacity: 1;
-}
+
 .nav-top-search {
   /* display: none; */
-  opacity: 0;
-  height: 60px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  min-height: 100px;
   width: 600px;
   animation: show 1s ease 0s;
-  /* display: flex;
-  align-items: center;
-  justify-content: center; */
   border-radius: 30px;
   background: #fff;
   box-shadow: 0 1px 3px rgba(18, 18, 18, 0.2);
@@ -124,6 +125,7 @@ body {
 .nav-center {
   width: 80vw;
   height: auto;
+  margin-top: 15px;
 }
 .nav-center-content {
   display: flex;
@@ -140,13 +142,20 @@ body {
   flex: 1;
   height: 1000px;
   padding: 0 5px;
+  padding-top: 78px;
+  background: rgb(31, 163, 224);
+
+  box-shadow: 0 1px 3px rgba(18, 18, 18, 0.2);
 }
 .nav-center-right {
   width: 300px;
   height: 800px;
+  background: rgb(31, 163, 224);
+  box-shadow: 0 1px 3px rgba(18, 18, 18, 0.2);
 }
 .nav-center-left {
-  background: #fff;
+  background: rgb(31, 163, 224);
+
   box-shadow: 0 1px 3px rgba(18, 18, 18, 0.3);
   border-radius: 8px;
 }
