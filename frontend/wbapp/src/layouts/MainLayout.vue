@@ -2,7 +2,9 @@
   <div class="Viewer">
     <!-- 头部搜索区 -->
     <el-affix :offset="0">
-      <div class="nav-bar">导航栏区</div>
+      <div class="nav-bar">
+        <slot name="topNavBar"></slot>
+      </div>
     </el-affix>
     <!-- 顶部提供图片背景插槽和导航栏插槽 -->
     <div class="nav-top">
@@ -23,7 +25,7 @@
 
       <div class="nav-center-content">
         <!-- 中心左侧区 -->
-        <el-affix :offset="90">
+        <el-affix :offset="92">
           <div class="nav-center-left">
             <slot name="center-left">左侧区域</slot>
           </div>
@@ -35,7 +37,7 @@
           <slot name="center">sdf</slot>
         </div>
 
-        <el-affix :offset="90">
+        <el-affix :offset="92">
           <div class="nav-center-right">
             <slot name="center-right">右侧区域</slot>
           </div>
@@ -80,22 +82,37 @@ body {
 
 .nav-top {
   width: 100vw;
-  min-height: 200px;
   background: coral;
   position: relative;
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
+  align-items: center;
+  justify-content: center;
 }
 .nav-top .backPic {
   width: 100%;
-  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: cornflowerblue;
+  background: #7f7fd5; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to right,
+    #91eae4,
+    #86a8e7,
+    #7f7fd5
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #91eae4,
+    #86a8e7,
+    #7f7fd5
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 .nav-bar {
   width: 100vw;
-  min-height: 100px;
-  background: chartreuse;
-  padding: 20px;
+  padding: 25px;
 }
 @keyframes show {
   0% {
@@ -115,11 +132,12 @@ body {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  min-height: 100px;
+
   width: 600px;
-  animation: show 1s ease 0s;
-  border-radius: 30px;
-  background: #fff;
+  border-radius: 35px;
+  height: auto;
+  backdrop-filter: blur(20px);
+  background: rgba(216, 216, 216, 0.055);
   box-shadow: 0 1px 3px rgba(18, 18, 18, 0.2);
 }
 .nav-center {
@@ -133,7 +151,7 @@ body {
 }
 .nav-center-left {
   width: 200px;
-  height: 800px;
+  height: 600px;
   background: #fff;
   box-shadow: 0 1px 3px rgba(18, 18, 18, 0.2);
 }
@@ -142,19 +160,16 @@ body {
   flex: 1;
   height: 1000px;
   padding: 0 5px;
-  padding-top: 78px;
-  background: rgb(31, 163, 224);
-
-  box-shadow: 0 1px 3px rgba(18, 18, 18, 0.2);
 }
 .nav-center-right {
   width: 300px;
-  height: 800px;
-  background: rgb(31, 163, 224);
+  background: #fff;
+  border-radius: 8px;
+
   box-shadow: 0 1px 3px rgba(18, 18, 18, 0.2);
 }
 .nav-center-left {
-  background: rgb(31, 163, 224);
+  background: #fff;
 
   box-shadow: 0 1px 3px rgba(18, 18, 18, 0.3);
   border-radius: 8px;

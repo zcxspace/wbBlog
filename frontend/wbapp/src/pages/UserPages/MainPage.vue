@@ -76,23 +76,23 @@
 </template>
 
 <script>
-import blog from "../UserInfo/MainPages/blogPage.vue";
+import blog from "./blogPage.vue";
 import ImgCutter from "vue-img-cutter";
-
+import DialogueBar from "../../components/ShareComs/DialogueBar.vue";
+import SelectCom from "../../components/UserInfoComs/selectCom.vue";
 import {
   getUserInfo,
   changeBack,
   follow,
   unFollow,
 } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
-import DialogueBar from "../DialogueBar.vue";
-import SelectCom from "../Single/selectCom.vue";
+
 import { mapMutations } from "vuex";
 export default {
   props: {
     path: String,
   },
-  name: "MuserInfo",
+  name: "userInfo",
 
   data() {
     return {
@@ -204,7 +204,6 @@ export default {
       }
       let path = "http://120.25.125.57:8080/xhywblog/users/" + this.path;
       let result = await getUserInfo(path);
-      console.log(result);
       this.userInfo = result.data.data.user;
       this.dynamics = result.data.data.dynamic;
       this.profilePath = result.data.data.user.photo;
@@ -214,9 +213,7 @@ export default {
         interests = "没啥兴趣",
         trait = "没有，有就是摸鱼",
       } = result.data.data.user;
-      console.log(result.data.data.user);
       this.displayInfo = [intro, interests, trait];
-      console.log(intro);
     } else {
       this.userInfo = this.$store.state.userInfo;
       this.dynamics = this.$store.state.userDynamic;
@@ -320,7 +317,6 @@ export default {
 .myPage {
   width: 100%;
   height: auto;
-  background: burlywood;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -332,6 +328,7 @@ export default {
 .top .goBackTab {
   width: 100%;
   height: 100%;
+  border-radius: 12px 12px 0 0;
   display: flex;
   padding-left: 15px;
   justify-content: flex-start;

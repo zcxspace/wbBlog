@@ -7,7 +7,9 @@
       <div class="content"><slot name="content"></slot></div>
       <div class="btn">
         <button class="cancel" @click="cancel">取消</button>
-        <button class="yes" @click="toDel">确认</button>
+        <button class="yes" @click="toDel">
+          <slot name="yesBtn">确定</slot>
+        </button>
       </div>
     </div>
   </div>
@@ -49,7 +51,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  z-index: 2000;
   height: 100%;
   width: 100%;
   color: cornsilk;

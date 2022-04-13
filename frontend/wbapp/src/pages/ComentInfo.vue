@@ -1,19 +1,21 @@
 <template>
   <div class="comment" v-infinite-scroll="load">
-    <div class="backBar">
-      <div class="btnBar">
-        <button @click="closeAll">
-          <i class="iconfont icon-fanhui"></i>
-        </button>
-        返回
+    <el-affix :offset="90">
+      <div class="backBar">
+        <div class="btnBar">
+          <button @click="closeAll">
+            <i class="iconfont icon-fanhui"></i>
+            返回
+          </button>
+        </div>
       </div>
-    </div>
+    </el-affix>
     <dynamic-tab :dynamicInfo="info" ref="dynamic"></dynamic-tab>
   </div>
 </template>
 
 <script>
-import DynamicTab from "../components/common/Single/DynamicTab.vue";
+import DynamicTab from "../components/DynamicComs/DynamicTab.vue";
 export default {
   components: { DynamicTab },
   data() {

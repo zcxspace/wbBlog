@@ -35,9 +35,9 @@
 </template>
 
 <script>
-import FirstLevel from "./common/FirstLevel.vue";
-import LoadingCom from "./common/LoadingCom.vue";
-import SetCom from "./common/SetCom.vue";
+import FirstLevel from "../../DynamicComs/comment/FirstLevel.vue";
+import LoadingCom from "../../LoadingComs/LoadingCom.vue";
+import SetCom from "../../ShareComs/SetCom.vue";
 import { getComment } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
 export default {
   components: { FirstLevel, SetCom, LoadingCom },
@@ -92,7 +92,7 @@ export default {
     },
     checkAll() {
       this.$router.push({
-        name: "comInfo",
+        name: "allCommentPage",
         params: { info: `${JSON.stringify(this.dynamicInfo)}` },
       });
     },

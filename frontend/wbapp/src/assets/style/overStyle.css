@@ -39,3 +39,17 @@ justify-content: center;
 .el-date-editor.el-input, .el-date-editor.el-input__inner:focus {
     border: 3px solid royalblue;
 }
+
+/* 修改轮播图 */
+.el-carousel__arrow--left {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    background: royalblue;
+}
+.el-carousel__arrow--right{
+       position: absolute;
+        top: 50%;
+        right: 16px;
+    background: royalblue;
+}

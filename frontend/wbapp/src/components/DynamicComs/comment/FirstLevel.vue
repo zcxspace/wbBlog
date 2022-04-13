@@ -50,7 +50,10 @@
                   style="font-size: 28px"
                 ></i></button
               ><button @click="isShowCom = true">
-                <i class="iconfont icon-pinglunxiao"></i>
+                <i
+                  class="iconfont icon-pinglunxiao"
+                  style="font-size: 25px"
+                ></i>
               </button>
             </div>
           </div>
@@ -80,9 +83,9 @@ import {
   delComment,
   getComment,
 } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
-import SecondLevel from "./SecondLevel.vue";
-import SetCom from "./SetCom.vue";
-import DialogueBar from "./DialogueBar.vue";
+import SecondLevel from "../../DynamicComs/comment/SecondLevel.vue";
+import SetCom from "../../ShareComs/SetCom.vue";
+import DialogueBar from "../../ShareComs/DialogueBar.vue";
 export default {
   components: { SecondLevel, SetCom, DialogueBar },
   props: {

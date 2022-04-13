@@ -12,7 +12,13 @@ async function getCaptcha() {
             return res.request.responseURL;
         }).catch(e => { console.log(e) })
 }
-
+//邮箱验证
+async function getEmailCap(email) {
+    let result = await axios.post('http://120.25.125.57:8080/xhywblog/users/email', {
+        email: email
+    });
+    return result;
+}
 // 发送注册请求
 async function SignUp(email, password, gender, captcha) {
 
@@ -206,5 +212,11 @@ async function getHotWord() {
     let result = axios.post(' http://120.25.125.57:8080/xhywblog/dynamic/getHotDynamic');
     return result;
 }
-export { getHotWord, getTopics, changeBack, getFollower, getFans, unFollow, follow, delComment, getComment, postComment, GetPublic, getCaptcha, getUserInfo, SignUp, SignIn, GetHotWord, SentBlog, changeProfile, changeUserInfo, DeleteDynamic, editDynamic, isLike }
+
+//获取热门动态 
+async function getHotDy() {
+    let result = axios.post('http://120.25.125.57:8080/xhywblog/dynamic/getMidleDynamic');
+    return result;
+}
+export { getHotDy, getEmailCap, getHotWord, getTopics, changeBack, getFollower, getFans, unFollow, follow, delComment, getComment, postComment, GetPublic, getCaptcha, getUserInfo, SignUp, SignIn, GetHotWord, SentBlog, changeProfile, changeUserInfo, DeleteDynamic, editDynamic, isLike }
 

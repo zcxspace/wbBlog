@@ -99,10 +99,10 @@
 </template>
 
 <script>
-import DialogueBox from "../components/common/DialogueBar.vue";
-import { SentBlog, getUserInfo, GetPublic } from "../assets/request/index.js";
+import DialogueBox from "../../components/ShareComs/DialogueBar.vue";
+import { SentBlog, getUserInfo, GetPublic } from "../../assets/request/index";
 import { mapMutations } from "vuex";
-import TipCom from "./common/Single/TipCom.vue";
+import TipCom from "../../components/ShareComs/TipCom.vue";
 export default {
   props: {
     useTo: String,
@@ -269,6 +269,7 @@ export default {
           form.append("forwardDynamicId", this.forwardId);
 
           let result = await SentBlog(form);
+          console.log(result);
           if (result.data.message.includes("成功")) {
             this.status = "success";
             this.tipText = "转发成功";

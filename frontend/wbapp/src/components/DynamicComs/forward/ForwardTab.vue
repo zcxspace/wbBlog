@@ -61,9 +61,6 @@ export default {
       return getCreateTime(this.forwardDynamic.createdTime);
     },
   },
-  created() {
-    console.log(this.forwardDynamic);
-  },
 };
 </script>
 

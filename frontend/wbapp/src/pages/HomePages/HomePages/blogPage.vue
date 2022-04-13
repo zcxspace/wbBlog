@@ -28,9 +28,12 @@
 </template>
 
 <script>
-import LoadingCom from "../../LoadingCom.vue";
-import SkeletonCom from "../../SkeletonCom.vue";
-import dynamicTab from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/components/common/Single/DynamicTab.vue";
+// import LoadingCom from "../../LoadingCom.vue";
+// import SkeletonCom from "../../SkeletonCom.vue";
+// import dynamicTab from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/components/common/Single/DynamicTab.vue";
+import LoadingCom from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/components/LoadingComs/LoadingCom.vue";
+import SkeletonCom from "../../../components/LoadingComs/SkeletonCom.vue";
+import dynamicTab from "../../../components/DynamicComs/DynamicTab.vue";
 export default {
   components: {
     dynamicTab,
@@ -46,7 +49,15 @@ export default {
       Loading: false,
       NowDisNum: 0,
       isShowSk: true,
+      dynamicNum: this.dynamics.length,
     };
+  },
+  watch: {
+    NowDisNum(newValue) {
+      if (newValue == this.dynamicNum) {
+        this.Loading = false;
+      }
+    },
   },
   methods: {
     load() {
@@ -72,10 +83,6 @@ export default {
       return this.NowDisNum >= this.dynamics.length;
     },
   },
-  mounted() {
-    console.log(this.dynamics);
-    console.log(this.userInfo);
-  },
   created() {
     setTimeout(() => {
       this.isShowSk = false;
@@ -85,10 +92,6 @@ export default {
         this.NowDisNum = this.dynamics.length;
       }
     }, 1200);
-
-    // console.log(this.dynamics.length);
-    console.log(this.userInfo);
-    console.log(this.dynamics);
   },
 };
 </script>

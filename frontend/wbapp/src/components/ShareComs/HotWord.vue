@@ -1,5 +1,14 @@
 <template>
   <div class="hotWord" @load="alert">
+    <dialogue-bar
+      @hideDialog="isShowTips = false"
+      @yes="goToSign('In')"
+      v-if="isShowTips"
+    >
+      <template #title>还未登陆哦！</template>
+      <template #content>请登录后再尝试叭</template>
+      <template #yesBtn>去登录</template>
+    </dialogue-bar>
     <div class="top">
       <div>微博热搜</div>
       <div class="getNewBox" @click="getNew">
@@ -28,15 +37,21 @@
 </template>
 
 <script>
+import DialogueBar from "../ShareComs/DialogueBar.vue";
 import { getHotWord } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
 export default {
+  components: { DialogueBar },
   name: "HotWord",
   data() {
     return {
       hotWordList: [],
+      isShowTips: false,
     };
   },
   methods: {
+    goToSign(page) {
+      this.$router.push({ name: "Sign", params: { page: page } });
+    },
     async getNew() {
       let result = await getHotWord();
       this.hotWordList = result.data.data;
@@ -44,10 +59,14 @@ export default {
       console.log(result);
     },
     async goToTopic(topic) {
-      this.$router.push({
-        name: "TopicsPage",
-        params: { type: "all", topic: topic },
-      });
+      if (this.$store.state.isOnline) {
+        this.$router.push({
+          name: "topicPage",
+          params: { type: "all", topic: topic },
+        });
+      } else {
+        this.isShowTips = true;
+      }
     },
     getStr(str) {
       return str.length < 10 ? str : str.slice(0, 10) + "...";

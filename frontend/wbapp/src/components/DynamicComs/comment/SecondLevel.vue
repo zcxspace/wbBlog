@@ -52,8 +52,8 @@
 <script>
 import { getCreateTime } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/PublicFun.js";
 import { delComment } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
-import SetCom from "./SetCom.vue";
-import DialogueBar from "./DialogueBar.vue";
+import SetCom from "../../ShareComs/SetCom.vue";
+import DialogueBar from "../../ShareComs/DialogueBar.vue";
 export default {
   props: {
     dynamicInfo: Object,
@@ -66,7 +66,7 @@ export default {
     return {
       isShowSet: false,
       replyText: this.secondItem.replyText,
-      profile: this.secondItem.user.photo,
+      profile: this.$store.state.userInfo.photo,
       isShowD: false,
     };
   },

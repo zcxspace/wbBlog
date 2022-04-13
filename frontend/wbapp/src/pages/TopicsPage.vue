@@ -1,56 +1,39 @@
 <template>
-  <div class="topic">
-    <main-layout v-infinite-scroll="load" infinite-scroll-distance="50">
-      <template #center-left>
-        <left-bar :ComArr="ComArr">
-          <template #title>搜索结果</template>
-        </left-bar>
+  <div class="topic" v-infinite-scroll="load" infinite-scroll-distance="50">
+    <div class="topicTab">
+      <div class="top">
+        <div class="title">#{{ title }}#</div>
+        <button class="shareBtn">分享</button>
+      </div>
+      <div class="bottom"><span>今日阅读</span><span>今日讨论</span></div>
+    </div>
+    <div v-if="isShowSk">
+      <template v-for="n of 3" :key="n">
+        <skeleton-com></skeleton-com>
       </template>
-      <template #center>
-        <div class="topicTab">
-          <div class="top">
-            <div class="title">#{{ title }}#</div>
-            <button class="shareBtn">分享</button>
-          </div>
-          <div class="bottom"><span>今日阅读</span><span>今日讨论</span></div>
+    </div>
+    <div class="setTab" v-show="!isShowSk">
+      <div v-if="dynamicNum != 0">
+        <template v-for="n of nowDisNum" :key="n">
+          <dynamic-tab :dynamicInfo="dynamicInfo[n - 1]"></dynamic-tab>
+        </template>
+        <div v-show="!isShowSk">
+          <loading-com v-if="isLoading"></loading-com>
         </div>
-        <div v-if="isShowSk">
-          <template v-for="n of 3" :key="n">
-            <skeleton-com></skeleton-com>
-          </template>
-        </div>
-        <div class="setTab" v-show="!isShowSk">
-          <div v-if="dynamicNum != 0">
-            <template v-for="n of nowDisNum" :key="n">
-              <dynamic-tab :dynamicInfo="dynamicInfo[n - 1]"></dynamic-tab>
-            </template>
-            <div v-show="!isShowSk">
-              <loading-com v-if="isLoading"></loading-com>
-            </div>
 
-            <span v-if="noMore">没有更多数据了</span>
-          </div>
-        </div>
-      </template>
-
-      <template #center-right> <hot-word></hot-word> </template>
-    </main-layout>
+        <span v-if="noMore">没有更多数据了</span>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import HotWord from "../components/common/HotWord.vue";
-import DynamicTab from "../components/common/Single/DynamicTab.vue";
-import LeftBar from "../components/common/Single/LeftBar.vue";
-import MainLayout from "../layouts/MainLayout.vue";
+import DynamicTab from "../components/DynamicComs/DynamicTab.vue";
 import { getTopics } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
 export default {
   name: "TopicsPage",
   components: {
-    MainLayout,
     DynamicTab,
-    HotWord,
-    LeftBar,
   },
   props: {
     type: String,

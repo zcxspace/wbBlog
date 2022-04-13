@@ -5,134 +5,105 @@ const routes = [
     path: '/',
 
     name: 'home',
-    component: () => import('../views/ViewerView.vue'),
+    redirect: '/wb/newLogin',
+    component: () => import('../layouts/MainLayout.vue')
+    //主页面
+
   },
-
   {
-    path: '/User',
-    name: 'UserView',
-    redirect: '/User/UserHome/HomePage1/HomePage',
-    component: () => import('../views/UserView.vue'),
+    path: '/wb',
+    name: 'wb',
+    props: true,
+    redirect: '/wb/homePage/homeAll',
+    component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/views/wbView.vue'),
     children: [
+      //渲染在wbView center 中
+      //home
       {
-        path: 'UserPage',
-        name: 'userPage',
-        redirect: '/User/UserPage/MainUser',
-        component: () => import('../pages/UserPage.vue'),
-        children: [{
-          path: 'MainUser',
-          name: 'MuserInfo',
-          component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/components/common/UserInfo/MainPage.vue'),
-          meta: {
-            keepAlive: true
-          },
-          props: true,
-        },
-        {
-          path: 'ChangeInfo',
-          name: 'ChangeInfo',
-          component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/UserPages/AlertInfo.vue'),
-          meta: {
-            keepAlive: true
-          }
-        },
-        {
-          path: 'AlertInfo',
-          name: 'AlertInfo',
-          component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/UserPages/AlertInfo.vue')
-        },
-
-        ]
-      },
-
-      {
-        //微博主页
-        path: 'UserHome',
-        redirect: '/User/UserHome/HomePage1/HomePage',
-        component: () => import('../pages/UserHome.vue'),
-        //一级子页面
+        path: 'homePage',
+        name: 'homePage',
+        redirect: '/wb/homePage/homeAll',
+        component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/HomePages/HomePage1.vue'),
         children: [
+          //homePage1
           {
-            path: 'HomePage1',
-            name: 'HomePage1',
-            component: () => import('../pages/HomePages/HomePage1.vue'),
-            props: true,
-            //二级子页面
-            children: [{
-              path: 'HomePage',
-              name: 'HomePage',
-              component: () => import('../pages/HomePages/HomePage'),
-            }]
-          },
-          //一级子页面
-          {
-            path: 'UserInfo',
-            name: 'userInfo',
-            component: () => import('../pages/UserPages/UserInfo.vue'),
-            children: [
-              //主用户信息页
-              {
-                name: 'RandomInfo',
-                path: 'RandomInfo/:path',
-                component: () => import('../components/common/UserInfo/MainPage.vue'),
-                props: true,
-              },
-              {
-                name: 'FansFollow',
-                path: 'FansFollow/:carryInfo',
-                component: () => import('../components/common/UserInfo/FansFollow.vue'),
-                props: true,
-              },
-              // 用户粉丝页
-            ]
-          },
-
-          // {
-          //   name: 'userInfo',
-          //   path: 'User/:path',
-          //   component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/components/common/UserInfo/MainPage.vue'),
-          //   props: true,
-          // },
-          {
-            name: 'comInfo',
-            path: 'comInfo/:info',
-            component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/ComentInfo.vue'),
-
+            path: 'homeAll',
+            name: 'homeAll',
+            component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/HomePages/HomePage.vue')
           }
         ]
       },
+      //hot
       {
-        path: 'UserHot',
-        component: () => import('../pages/UserHot.vue')
+        path: 'hotPage',
+        name: 'hotPage',
+
+        component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/HotPages/HotPage.vue')
       },
+      // user
       {
-        path: 'Topics/:type/:topic',
-        name: 'TopicsPage',
-        component: () => import('../pages/TopicsPage.vue'),
+        path: 'userPage',
+        name: 'userPage',
+        // redirect: 'userPage',
         props: true,
+        component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/UserPage.vue'),
+        children: [
+          //共享用户信息页
+          {
+            path: 'userInfo/:path',
+            props: true,
+            name: 'userInfo',
+            component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/UserPages/MainPage.vue')
+          },
+          //用户编辑信息页
+          {
+            path: 'edit',
+            name: 'edit',
+            component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/UserPages/AlertInfo.vue')
+          },
+          //粉丝与关注
+          {
+            path: 'FansFollow/:carryInfo',
+            name: 'FansFollow',
+            component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/components/UserInfoComs/FansFollow.vue')
+          }
+        ]
+
+      },
+      //topics
+      {
+        path: 'topicPage/:type/:topic',
+        name: 'topicPage',
+        component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/TopicsPage.vue'),
+        props: true,
+
+      },
+      // allComment
+      {
+        path: 'allCommentPage/:info',
+        name: 'allCommentPage',
+        // 允许跳转路由传参
+        props: true,
+        component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/ComentInfo.vue')
+      },
+      //newLogin
+      {
+        path: 'newLogin',
+        name: 'newLogin',
+        component: () => import('/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/pages/HotPages/HotPage.vue')
       }
     ]
-  },
-  {
-    path: '/SignIn',
-    component: () => import('../views/SignIn.vue')
-  },
-  {
-    path: '/SignUp',
-    component: () => import('../views/SignUp.vue')
-  },
-  {
-    path: '/ToSign',
-    component: () => import("../views/ToSign.vue")
+
   }
-  // {
-  //   path: '/about',
-  //   name: 'about',
-  //   // route level code-splitting
-  //   // this generates a separate chunk (about.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  // }
+  ,
+  {
+    path: '/ToSign/:page',
+    name: 'Sign',
+    component: () => import("../views/ToSign.vue"),
+    props: true,
+  }
+
+
 
 ]
 

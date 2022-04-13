@@ -5,10 +5,24 @@ export default createStore({
     userInfo: null,
     userDynamic: null,
     HomePageDynamic: null,
+    leftBarName: "newLogin",
+    isOnline: null,
+    txt: null,
   },
   getters: {
   },
   mutations: {
+    updateStatus(state, status) {
+      state.isOnline = status;
+    },
+    test(state, str) {
+      state.txt = str;
+    },
+    //更新左侧导航栏
+    updateLeftBar(state, leftBarName) {
+      state.leftBarName = leftBarName;
+      console.log('更新了导航栏现在是' + leftBarName)
+    },
     //更新当前登录用户的数据
     updateUserInfo(state, AllUserInfo) {
       console.log('updated')
@@ -33,7 +47,8 @@ export default createStore({
     },
     //单独更新用户头像
     updateUserAvatar(state, path) {
-      state.userInfo.photo = path
+      state.userInfo.photo = path;
+      console.log('已经单独更新了头像')
     },
     updateUserBg(state, path) {
       state.userInfo.background = path

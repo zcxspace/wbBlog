@@ -17,28 +17,28 @@
 </template>
 
 <script>
-import SetBar from "../../components/SetBar.vue";
+import SetBar from "../../components/ShareComs/SetBar.vue";
 // import HomePage from "./HomePage.vue";
 
 export default {
   components: { SetBar },
-  props: {
-    type: String,
-  },
-  data() {
-    return {
-      nowCom: this.type,
-    };
-  },
-  watch: {
-    nowCom(newCom, OldCom) {
-      this.nowCom = newCom;
-      console.log(OldCom);
-    },
-  },
+  // props: {
+  //   type: String,
+  // },
+  // data() {
+  //   return {
+  //     nowCom: this.type,
+  //   };
+  // },
+  // watch: {
+  //   nowCom(newCom, OldCom) {
+  //     this.nowCom = newCom;
+  //     console.log(OldCom);
+  //   },
+  // },
   created() {
     console.log("进入page1了");
-    console.log(this.nowCom);
+    // console.log(this.nowCom);
   },
 };
 </script>

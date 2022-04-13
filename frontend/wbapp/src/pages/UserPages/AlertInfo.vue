@@ -107,7 +107,7 @@
 <script>
 import ImgCutter from "vue-img-cutter";
 import { mapMutations } from "vuex";
-import AlertBox from "../../components/common/Single/alertBox.vue";
+import AlertBox from "../../components/UserInfoComs/alertBox.vue";
 import { getDate } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/PublicFun.js";
 import {
   changeUserInfo,
@@ -137,7 +137,7 @@ export default {
   },
   computed: {
     gender() {
-      return this.userGender == 0 ? "男" : "女";
+      return this.userGender == 1 ? "男" : "女";
     },
     birth() {
       return getDate(this.userBirth);
@@ -236,6 +236,7 @@ export default {
     },
   },
   created() {
+    console.log(this.$store.state.leftBarName);
     let userInfo = Object.assign({}, this.$store.state.userInfo);
     this.userName = userInfo.name;
     this.userAddress = userInfo.address;
@@ -247,6 +248,7 @@ export default {
     this.userBirth = userInfo.birthday;
     this.userGender = userInfo.gender;
     this.userPhoto = userInfo.photo;
+    console.log(userInfo.background);
     this.bgStyle.background = `no-repeat center/100% url(${userInfo.background})`;
     console.log(userInfo);
   },
@@ -367,7 +369,7 @@ export default {
 .mainInfo ul li {
   list-style: none;
   width: 100%;
-  min-height: 160px;
+  min-height: 100px;
   margin: 5px 0;
   display: flex;
   align-items: center;

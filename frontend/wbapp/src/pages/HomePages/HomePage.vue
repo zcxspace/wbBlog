@@ -6,8 +6,11 @@
       </template>
     </div>
     <div v-if="!showSk">
-      <template v-for="n of NowDisNum" :key="n">
-        <dynamic-tab :dynamicInfo="dynamics[n - 1]"></dynamic-tab>
+      <template v-for="n of NowDisNum" :key="n - 1">
+        <dynamic-tab
+          :dynamicInfo="dynamics[n - 1]"
+          :userInfo="dynamics[n - 1].user"
+        ></dynamic-tab>
       </template>
       <div v-if="!showSk">
         <loading-com v-if="Loading" :text="'疯狂加载中'"></loading-com>
@@ -22,14 +25,14 @@
 <script>
 import { mapMutations } from "vuex";
 import { GetPublic } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
-import DynamicTab from "../../components/common/Single/DynamicTab.vue";
-import SkeletonCom from "../../components/common/SkeletonCom.vue";
+import DynamicTab from "../../components/DynamicComs/DynamicTab.vue";
+import SkeletonCom from "../../components/LoadingComs/SkeletonCom.vue";
 
 export default {
-  components: { DynamicTab, SkeletonCom },
+  components: { SkeletonCom, DynamicTab },
   data() {
     return {
-      NowDisNum: 0,
+      NowDisNum: null,
       Loading: false,
       dynamics: this.$store.state.HomePageDynamic,
       showSk: true,
@@ -61,18 +64,34 @@ export default {
       return this.$store.state.HomePageDynamic ? true : false;
     },
   },
+  mounted() {},
   async created() {
-    console.log("进入HomePage");
+    console.log(Date.now());
+
     // console.log(this.$store.state.HomePageDynamic.length);
     // console.log(this.noMore);
     let result = await GetPublic();
+    console.log(result);
+    console.log("sd");
     let publicDynamic = result.data.data;
-    console.log(publicDynamic);
+
     this.updateHomePageDynamic(publicDynamic);
+    //store中数据更新 但是如果该组件属性绑定此数据 数据不会进行更新
+    console.log(publicDynamic);
+    this.dynamics = this.$store.state.HomePageDynamic;
+    console.log(this.$store.state.HomePageDynamic.length);
+    let dynamicNum = this.$store.state.HomePageDynamic.length;
+
+    console.log("执行完了");
+    console.log(this.showSk);
     setTimeout(() => {
       this.showSk = false;
-      this.NowDisNum = 4;
-    }, 0);
+      if (dynamicNum >= 4) {
+        this.NowDisNum = 4;
+      } else {
+        this.NowDisNum = dynamicNum;
+      }
+    }, 1500);
   },
 };
 </script>

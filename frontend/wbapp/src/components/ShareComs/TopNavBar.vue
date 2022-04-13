@@ -60,7 +60,7 @@ li {
   list-style: none;
 }
 .top-bar {
-  width: 95%;
+  width: 100%;
   height: 80px;
   z-index: 1000;
   position: fixed;
@@ -70,7 +70,6 @@ li {
   display: flex;
   background: #fff;
   justify-content: space-between;
-  border-radius: 10px;
   box-shadow: 0 1px 3px rgba(18, 18, 18, 0.2);
 }
 
@@ -156,8 +155,7 @@ li {
   align-items: center;
   justify-content: flex-end;
 }
-.center li,
-.right li {
+li {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -173,7 +171,11 @@ li {
 .right li:hover {
   color: royalblue;
 }
+li i {
+  pointer-events: none;
+}
 .chosen {
+  /* background: royalblue; */
   border-bottom: 4px solid royalblue;
   color: royalblue;
 }

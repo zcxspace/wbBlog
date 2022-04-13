@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import DialogueBar from "./DialogueBar.vue";
+import DialogueBar from "../ShareComs/DialogueBar.vue";
 import { postComment } from "/Users/zhangchenxi/Desktop/git微博项目/Wblog/frontend/wbapp/src/assets/request/index.js";
 export default {
   components: { DialogueBar },
@@ -67,6 +67,7 @@ export default {
       this.isOpen = false;
     },
     async postCom() {
+      if (!this.comValue) return;
       let result = await postComment(
         this.comValue,
         this.replyId,
