@@ -7,7 +7,6 @@ export default createStore({
     HomePageDynamic: null,
     leftBarName: "newLogin",
     isOnline: null,
-    txt: null,
   },
   getters: {
   },

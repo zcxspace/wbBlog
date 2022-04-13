@@ -216,8 +216,7 @@ export default {
         this.UpCap
       );
       if (result.data.message.includes("成功")) {
-        this.isChange = !this.isChange;
-        // this.SignInEmail = this.UpEmail;
+        this.isSignUp = !this.isSignUp;
       }
       console.log(result);
     },
