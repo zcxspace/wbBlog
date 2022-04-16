@@ -133,6 +133,7 @@ export default {
       isDisabled: false,
     };
   },
+  emits: ["getOriginPics"],
   components: { DialogueBox, TipCom },
   computed: {
     markIndex() {
@@ -174,7 +175,7 @@ export default {
       console.log("我执行了");
       let file = e.target.files[0];
       this.postUrls.push(file);
-      console.log(file);
+
       let that = this;
       //获取图片进行回显
       let reader = new FileReader();
@@ -182,11 +183,7 @@ export default {
       reader.onload = function () {
         console.log(that.displayUrls.length);
         that.displayUrls.push(this.result);
-        console.log(that.displayUrls);
-        console.log(that.postUrls);
       };
-      console.log(this.displayUrls);
-      console.log(this.postUrls);
     },
 
     //删除已经添加的图片
@@ -194,26 +191,28 @@ export default {
       // 获取对标数组;
       //判断是否为编辑 编辑操作复制数组 不是则操作原数组
       if (this.isEdit) {
+        // 如果原图数组修改操作对标数组
         if (this.copyArr.includes(url)) {
           let index = this.copyArr.indexOf(url);
           this.editArr.splice(index, 1, 1);
         }
         let delDex = this.displayUrls.indexOf(url);
         this.displayUrls.splice(delDex, 1);
-        this.editArr[delDex] = 1;
+        // this.editArr[delDex] = 1;
+        console.log(this.editArr);
       } else {
         let delDex = this.displayUrls.indexOf(url);
         this.displayUrls.splice(delDex, 1);
       }
 
-      let delDex = this.displayUrls.indexOf(url);
-      this.displayUrls.splice(delDex, 1);
-      this.editArr[delDex] = 1;
+      // let delDex = this.displayUrls.indexOf(url);
+      // this.displayUrls.splice(delDex, 1);
+      // this.editArr[delDex] = 1;
       console.log("test");
     },
     // 有数据后 删除提示
     confirm() {
-      //若有数据则提示 否则直接删除
+      //若有数据则提示 否则直接删除 并恢复图片数组
       if (this.displayUrls.length == 0 && this.textarea == "") {
         this.$emit("SetBar");
         console.log("隐藏");
@@ -224,27 +223,36 @@ export default {
 
     // 清除发布框数据
     deleteAll() {
-      this.displayUrls = [];
-      this.textarea = "";
-      this.dialogShow = !this.dialogShow;
+      if (this.isEdit) {
+        this.$emit("getOriginPics", this.copyArr);
+      } else {
+        this.displayUrls = [];
+        this.textarea = "";
+      }
+      this.$emit("SetBar");
     },
 
     ...mapMutations(["addData", "updateUserInfo", "updateHomePageDynamic"]),
     //测试发布模块
     async postNew() {
+      // 禁用发送
       this.isDisabled = true;
+
       if (this.textarea) {
         let form = new FormData();
-        for (let url of Object.values(this.postUrls)) {
-          form.append("file", url);
-        }
 
+        if (!this.isEdit) {
+          for (let url of Object.values(this.postUrls)) {
+            form.append("file", url);
+          }
+        }
         console.log(form.getAll("file"));
         let userId = this.$store.state.userInfo.id;
 
         form.append("text", this.textarea);
         form.append("visible", 0);
         form.append("userId", userId);
+
         //发布功能
         if (this.useTo == "publish") {
           form.append("forwardDynamicId", 0);
@@ -257,6 +265,7 @@ export default {
           if (result.data.message.includes("主页")) {
             this.status = "success";
             this.tipText = "发布成功";
+            this.postUrls = [];
             this.isShowTip = true;
           } else {
             this.status = "error";
@@ -280,7 +289,17 @@ export default {
             this.isShowTip = true;
           }
         } else if (this.useTo == "edit") {
+          form.append("forwardDynamicId", 0);
           form.append("id", this.editId);
+          if (this.postUrls) {
+            for (let url of Object.values(this.postUrls)) {
+              form.append("file", url);
+            }
+          }
+
+          console.log(this.postUrls);
+          // form.append("file", this.postUrls);
+          console.log(this.editArr);
           form.append("fileArray", this.editArr);
           await SentBlog(form);
         }
@@ -303,15 +322,27 @@ export default {
       this.isShow = !this.hideAfterSent;
     },
   },
+  beforeUnmount() {
+    console.log("卸载了");
+    console.log(this.displayUrls);
+  },
   created() {
     console.log(this.textareaHeight);
     //编辑信息不为空 则自动填充编辑信息
+
     if (JSON.stringify(this.editInfo) !== "{}") {
+      console.log(this.editInfo);
+      console.log(this.editInfo.Urls.target);
       this.textarea = this.editInfo.text;
       if (this.editInfo.Urls) {
-        this.displayUrls = this.editInfo.Urls;
+        //对象或数组引用赋值 修改this.displayUrls同样会改变this.editInfo.Urls
+        this.displayUrls = this.editInfo.Urls.slice();
+        // this.postUrls = this.editInfo.Urls;
         //返回编辑数组 传给后端进行判断
-        this.copyArr = this.displayUrls.slice();
+        console.log(this.editInfo.Urls);
+        this.copyArr = this.editInfo.Urls.slice();
+        console.log(this.copyArr == this.displayUrls);
+        console.log(this.copyArr);
         let arr = [];
         for (let i = 0; i < this.displayUrls.length; i++) {
           arr.push(0);
@@ -321,6 +352,7 @@ export default {
       } else console.log("图片为空");
       this.isEdit = true;
     } else this.isEdit = false;
+    console.log(this.isEdit);
   },
 };
 </script>
